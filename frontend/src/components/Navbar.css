@@ -1,0 +1,317 @@
+.navbar {
+  width: 100%;
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 5%;
+
+  background-color: #ffffff;
+  border-bottom: 1px solid #e7efec;
+
+  box-sizing: border-box;
+}
+
+/* LOGO */
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-shrink: 0;
+  margin-right: 45px;
+}
+
+.navbar-logo img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.navbar-logo span {
+  color: #0aaa68;
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* NAVIGATION LINKS */
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+
+  flex: 1;
+}
+
+.navbar-links a {
+  position: relative;
+
+  color: #263b3a;
+  text-decoration: none;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  white-space: nowrap;
+
+  transition: color 0.2s ease;
+}
+
+.navbar-links a:hover {
+  color: #0aaa68;
+}
+
+/* GREEN LINE ON HOVER */
+
+.navbar-links a::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+
+  width: 0;
+  height: 2px;
+
+  background-color: #0aaa68;
+
+  transition: width 0.2s ease;
+}
+
+.navbar-links a:hover::after {
+  width: 100%;
+}
+
+/* RIGHT SIDE BUTTONS */
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-left: 35px;
+
+  flex-shrink: 0;
+}
+
+/* LOGIN */
+
+.login-btn {
+  padding: 10px 19px;
+
+  color: #0aaa68;
+
+  background-color: #ffffff;
+
+  border: 1.5px solid #0aaa68;
+  border-radius: 9px;
+
+  text-decoration: none;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition: 0.2s ease;
+}
+
+.login-btn:hover {
+  color: #ffffff;
+  background-color: #0aaa68;
+}
+
+/* BOOK APPOINTMENT */
+
+.book-btn {
+  padding: 11px 20px;
+
+  color: #ffffff;
+
+  background-color: #0aaa68;
+
+  border: 1.5px solid #0aaa68;
+  border-radius: 9px;
+
+  text-decoration: none;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition: 0.2s ease;
+}
+
+.book-btn:hover {
+  background-color: #078c56;
+  border-color: #078c56;
+}
+
+/* SMALLER SCREENS */
+
+@media (max-width: 1050px) {
+  .navbar {
+    padding: 0 3%;
+  }
+
+  .navbar-logo {
+    margin-right: 20px;
+  }
+
+  .navbar-links {
+    gap: 18px;
+  }
+
+  .navbar-actions {
+    margin-left: 20px;
+  }
+}
+/* PROFILE MENU */
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 7px 10px;
+
+  background: #f0fdf8;
+  border: 1px solid #d5f3e7;
+  border-radius: 10px;
+
+  cursor: pointer;
+  color: #263b3a;
+  font-family: inherit;
+}
+
+.profile-button:hover {
+  background: #e6f9f1;
+}
+
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #0aaa68;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.profile-name {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.profile-arrow {
+  color: #64748b;
+  font-size: 9px;
+}
+
+/* DROPDOWN */
+
+.profile-dropdown {
+  position: absolute;
+
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 230px;
+
+  padding: 8px;
+
+  background: white;
+  border: 1px solid #e7efec;
+  border-radius: 12px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+
+  z-index: 1000;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+
+  padding: 10px 12px 12px;
+
+  border-bottom: 1px solid #edf2f0;
+
+  text-align: left;
+}
+
+.profile-info strong {
+  color: #183b33;
+  font-size: 14px;
+}
+
+.profile-info span {
+  margin-top: 2px;
+
+  color: #64748b;
+  font-size: 12px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-dropdown a,
+.dropdown-logout {
+  width: 100%;
+
+  display: block;
+
+  box-sizing: border-box;
+
+  padding: 10px 12px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #334155;
+  text-decoration: none;
+  text-align: left;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.profile-dropdown a:hover {
+  background: #f0fdf8;
+  color: #0aaa68;
+}
+
+.dropdown-logout {
+  margin-top: 4px;
+
+  border-top: 1px solid #edf2f0;
+
+  color: #dc2626;
+}
+
+.dropdown-logout:hover {
+  background: #fff1f2;
+}
