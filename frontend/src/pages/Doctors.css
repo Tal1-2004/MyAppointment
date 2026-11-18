@@ -1,0 +1,314 @@
+/* DOCTORS PAGE */
+
+.doctors-page {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+/* HEADER */
+
+.doctors-header {
+  padding: 75px 8% 60px;
+  text-align: center;
+  background: #f0fdf7;
+}
+
+.doctors-header p {
+  margin: 0 0 12px;
+  color: #18a875;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.doctors-header h1 {
+  margin: 0 0 18px;
+  color: #16332b;
+  font-size: 46px;
+}
+
+.doctors-header > span {
+  display: block;
+  max-width: 650px;
+  margin: 0 auto;
+  color: #64748b;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+
+/* ALL DOCTORS */
+
+.all-doctors {
+  padding: 80px 8%;
+}
+
+.all-doctors-grid {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+
+/* DOCTOR CARD */
+
+.doctor-card {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e2ece8;
+  border-radius: 18px;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.doctor-card:hover {
+  transform: translateY(-7px);
+
+  border-color: #b7e8d5;
+
+  box-shadow: 0 15px 35px rgba(24, 168, 117, 0.12);
+}
+
+
+/* DOCTOR IMAGE */
+
+.doctor-image {
+  width: 100%;
+  height: 250px;
+
+  overflow: hidden;
+
+  background: #eef8f4;
+}
+
+.doctor-image img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  transition: transform 0.35s ease;
+}
+
+.doctor-card:hover .doctor-image img {
+  transform: scale(1.04);
+}
+
+
+/* DOCTOR INFO */
+
+.doctor-info {
+  padding: 22px;
+}
+
+.doctor-specialty {
+  display: inline-block;
+
+  margin-bottom: 8px;
+
+  color: #15966b;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.doctor-info h3 {
+  margin: 0 0 12px;
+
+  color: #16332b;
+
+  font-size: 20px;
+}
+
+
+/* RATING */
+
+.doctor-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 14px;
+}
+
+.doctor-rating span {
+  color: #f5b301;
+  font-size: 18px;
+}
+
+.doctor-rating strong {
+  color: #263b3a;
+}
+
+.doctor-rating small {
+  color: #8a9894;
+}
+
+
+/* AVAILABILITY */
+
+.availability {
+  margin: 0 0 18px;
+
+  color: #18a875;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* BUTTONS */
+
+.doctor-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.profile-btn,
+.doctor-book-btn {
+  flex: 1;
+
+  padding: 11px 10px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.profile-btn {
+  color: #15966b;
+  background: #ffffff;
+
+  border: 1px solid #18a875;
+}
+
+.profile-btn:hover {
+  background: #effbf6;
+}
+
+.doctor-book-btn {
+  color: #ffffff;
+  background: #18a875;
+
+  border: 1px solid #18a875;
+}
+
+.doctor-book-btn:hover {
+  background: #12875e;
+  border-color: #12875e;
+}
+
+
+/* TABLET */
+
+@media (max-width: 1000px) {
+  .all-doctors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .doctors-header h1 {
+    font-size: 40px;
+  }
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .doctors-header {
+    padding: 55px 25px 45px;
+  }
+
+  .doctors-header h1 {
+    font-size: 34px;
+  }
+
+  .doctors-header > span {
+    font-size: 16px;
+  }
+
+  .all-doctors {
+    padding: 55px 25px;
+  }
+
+  .all-doctors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-image {
+    height: 300px;
+  }
+}
+/* BACK TO HOME */
+
+/* BACK TO HOME */
+
+.doctors-back {
+  padding: 28px 8% 5px;
+  background: #f0fdf7;
+}
+
+.doctors-back button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 10px 17px;
+
+  color: #15966b;
+  background: #ffffff;
+
+  border: 1px solid #b7e8d5;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 3px 10px rgba(24, 168, 117, 0.08);
+
+  transition: 0.2s ease;
+}
+
+.doctors-back button span {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+
+  transition: transform 0.2s ease;
+}
+
+.doctors-back button:hover {
+  color: #ffffff;
+  background: #18a875;
+  border-color: #18a875;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 6px 16px rgba(24, 168, 117, 0.18);
+}
+
+.doctors-back button:hover span {
+  transform: translateX(-3px);
+}
+
+.doctors-back button:hover span {
+  transform: translateX(-4px);
+}

@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BookAppointment from "./pages/BookAppointment";
+import Doctors from "./pages/Doctors";
+import DoctorRegister from "./pages/DoctorRegister";
 
 function App() {
   return (
@@ -22,6 +24,19 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/book-appointment" element={<BookAppointment />} />
+      <Route
+        path="/doctors"
+        element={
+          <>
+            <Navbar />
+            <Doctors />
+          </>
+        }
+      />
+      <Route
+        path="/doctor-register"
+        element={<DoctorRegister />}
+      />
     </Routes>
   );
 }

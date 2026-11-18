@@ -1,0 +1,295 @@
+/* DOCTOR REGISTER PAGE */
+
+.doctor-register-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 45px 20px;
+
+  background: #f0fdf7;
+}
+
+
+/* REGISTER CARD */
+
+.doctor-register-card {
+  width: 100%;
+  max-width: 850px;
+
+  padding: 38px 42px;
+
+  background: #ffffff;
+
+  border: 1px solid #e2ece8;
+  border-radius: 20px;
+
+  box-shadow: 0 15px 45px rgba(24, 168, 117, 0.1);
+}
+
+
+/* HEADER */
+
+.doctor-register-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.doctor-register-header img {
+  width: 65px;
+  height: 65px;
+
+  object-fit: contain;
+
+  margin-bottom: 10px;
+}
+
+.doctor-register-header h1 {
+  margin: 0 0 10px;
+
+  color: #16332b;
+
+  font-size: 32px;
+}
+
+.doctor-register-header p {
+  margin: 0 auto;
+
+  max-width: 520px;
+
+  color: #64748b;
+
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+
+/* FORM ROW */
+
+.doctor-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 20px;
+}
+
+
+/* FORM GROUP */
+
+.doctor-form-group {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 20px;
+}
+
+.doctor-form-group label {
+  margin-bottom: 8px;
+
+  color: #334155;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* INPUTS */
+
+.doctor-form-group input,
+.doctor-form-group select,
+.doctor-form-group textarea {
+  width: 100%;
+
+  padding: 13px 14px;
+
+  color: #263b3a;
+  background: #ffffff;
+
+  border: 1px solid #dce8e4;
+  border-radius: 9px;
+
+  outline: none;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.doctor-form-group input:focus,
+.doctor-form-group select:focus,
+.doctor-form-group textarea:focus {
+  border-color: #18a875;
+
+  box-shadow: 0 0 0 3px rgba(24, 168, 117, 0.1);
+}
+
+.doctor-form-group textarea {
+  resize: vertical;
+
+  min-height: 110px;
+}
+
+
+/* REGISTER BUTTON */
+
+.doctor-register-btn {
+  width: 100%;
+
+  padding: 14px 20px;
+
+  margin-top: 5px;
+
+  color: #ffffff;
+  background: #18a875;
+
+  border: none;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.doctor-register-btn:hover {
+  background: #12875e;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 7px 18px rgba(24, 168, 117, 0.18);
+}
+
+
+/* MESSAGE */
+
+.doctor-register-message {
+  padding: 11px 14px;
+
+  margin: 0 0 15px;
+
+  color: #12875e;
+  background: #effbf6;
+
+  border: 1px solid #c9f0e0;
+  border-radius: 8px;
+
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* FOOTER */
+
+.doctor-register-footer {
+  margin-top: 24px;
+
+  text-align: center;
+}
+
+.doctor-register-footer p {
+  margin: 0 0 12px;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+.doctor-register-footer a {
+  color: #15966b;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+.doctor-register-footer a:hover {
+  color: #12875e;
+
+  text-decoration: underline;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .doctor-register-page {
+    padding: 25px 15px;
+  }
+
+  .doctor-register-card {
+    padding: 28px 22px;
+  }
+
+  .doctor-register-header h1 {
+    font-size: 27px;
+  }
+
+  .doctor-form-row {
+    grid-template-columns: 1fr;
+
+    gap: 0;
+  }
+}
+/* PROFESSIONAL DOCUMENTS */
+
+.doctor-documents {
+  margin: 10px 0 25px;
+  padding: 22px;
+
+  background: #f8fffc;
+
+  border: 1px solid #dceee7;
+  border-radius: 12px;
+}
+
+.doctor-documents h3 {
+  margin: 0 0 6px;
+
+  color: #16332b;
+  font-size: 17px;
+}
+
+.documents-info {
+  margin: 0 0 20px;
+
+  color: #64748b;
+  font-size: 13px;
+}
+
+.doctor-documents input[type="file"] {
+  padding: 10px;
+
+  background: #ffffff;
+
+  border: 1px dashed #b7dccc;
+  border-radius: 9px;
+
+  cursor: pointer;
+}
+
+.doctor-documents input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 12px;
+
+  color: #15966b;
+  background: #eafaf4;
+
+  border: none;
+  border-radius: 6px;
+
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -372,7 +372,9 @@ function Home() {
             </div>
 
             <div className="view-all-doctors">
-              <button>View All Doctors</button>
+              <button onClick={() => window.location.href = "/doctors"}>
+                View All Doctors
+              </button>
             </div>
           </section>
 

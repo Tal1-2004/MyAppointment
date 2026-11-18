@@ -38,27 +38,28 @@ function Login() {
       );
 
       const data = await response.json();
+      console.log("LOGIN RESPONSE:", data);
 
-      if (response.ok) {
-        if (rememberMe) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-
-          sessionStorage.removeItem("token");
-          sessionStorage.removeItem("user");
-        } else {
-          sessionStorage.setItem("token", data.token);
-          sessionStorage.setItem("user", JSON.stringify(data.user));
-
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-        }
-
-        window.location.href = "/";
+      if (!response.ok) {
+        setMessage(data.message || "Invalid email or password");
         return;
       }
 
-      setMessage(data.message || "Invalid email or password");
+      if (rememberMe) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
+      } else {
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+
+      window.location.href = "/";
     } catch (error) {
       console.error(error);
       setMessage("Cannot connect to the server.");
@@ -68,6 +69,7 @@ function Login() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+
         <div className="auth-logo">
           <img src="/Designer.png" alt="MyAppointment logo" />
           <h2>MyAppointment</h2>
@@ -79,6 +81,7 @@ function Login() {
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
+
           <div className="form-group">
             <label>Email address</label>
 
@@ -111,7 +114,11 @@ function Login() {
                 type="button"
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
               >
                 {showPassword ? "🙈" : "👁"}
               </button>
@@ -123,8 +130,11 @@ function Login() {
               <input
                 type="checkbox"
                 checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
+                onChange={(e) =>
+                  setRememberMe(e.target.checked)
+                }
               />
+
               Remember me
             </label>
 
@@ -138,9 +148,13 @@ function Login() {
             </div>
           )}
 
-          <button type="submit" className="auth-submit">
+          <button
+            type="submit"
+            className="auth-submit"
+          >
             Log in
           </button>
+
         </form>
 
         <p className="auth-switch">
@@ -151,6 +165,7 @@ function Login() {
         <a href="/" className="back-home">
           ← Back to Home
         </a>
+
       </div>
     </div>
   );
