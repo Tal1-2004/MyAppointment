@@ -59,7 +59,11 @@ function Login() {
         localStorage.removeItem("user");
       }
 
-      window.location.href = "/";
+      if (data.user.role === "doctor") {
+            window.location.href = "/doctor-dashboard";
+          } else {
+            window.location.href = "/";
+          }
     } catch (error) {
       console.error(error);
       setMessage("Cannot connect to the server.");

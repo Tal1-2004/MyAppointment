@@ -1,5 +1,6 @@
 const Appointment = require("../models/Appointment");
 const User = require("../models/User");
+const Doctor = require("../models/Doctor");
 
 const {
   sendAppointmentConfirmation,
@@ -9,6 +10,7 @@ const createAppointment = async (req, res) => {
   try {
     const {
       patient,
+      doctor,
       doctorName,
       specialty,
       date,
@@ -16,6 +18,21 @@ const createAppointment = async (req, res) => {
       reason,
     } = req.body;
 
+    // Kontrollo fushat e nevojshme
+    if (
+      !patient ||
+      !doctor ||
+      !doctorName ||
+      !specialty ||
+      !date ||
+      !time
+    ) {
+      return res.status(400).json({
+        message: "Please complete all required appointment fields.",
+      });
+    }
+
+    // Kontrollo pacientin
     const user = await User.findById(patient);
 
     if (!user) {
@@ -24,8 +41,26 @@ const createAppointment = async (req, res) => {
       });
     }
 
+    // Kontrollo doktorin
+    const doctorProfile = await Doctor.findById(doctor);
+
+    if (!doctorProfile) {
+      return res.status(404).json({
+        message: "Doctor not found",
+      });
+    }
+
+    // Lejo booking vetëm me doktor të aprovuar
+    if (doctorProfile.verificationStatus !== "approved") {
+      return res.status(400).json({
+        message: "This doctor is not available for booking.",
+      });
+    }
+
+    // Krijo appointment
     const appointment = await Appointment.create({
       patient,
+      doctor,
       doctorName,
       specialty,
       date,
@@ -33,6 +68,7 @@ const createAppointment = async (req, res) => {
       reason,
     });
 
+    // Dërgo confirmation email
     try {
       await sendAppointmentConfirmation({
         email: user.email,
@@ -50,12 +86,17 @@ const createAppointment = async (req, res) => {
       );
     }
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Appointment booked successfully",
       appointment,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error(
+      "Create appointment error:",
+      error
+    );
+
+    return res.status(500).json({
       message: "Server error",
       error: error.message,
     });

@@ -92,7 +92,27 @@ const registerDoctor = async (req, res) => {
     });
   }
 };
+  const getApprovedDoctors = async (req, res) => {
+    try {
+      const doctors = await Doctor.find({
+        verificationStatus: "approved",
+      })
+        .populate("user", "name email")
+        .sort({ createdAt: -1 });
 
-module.exports = {
-  registerDoctor,
-};
+      return res.status(200).json({
+        doctors,
+      });
+    } catch (error) {
+      console.error("Get doctors error:", error);
+
+      return res.status(500).json({
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  };
+  module.exports = {
+    registerDoctor,
+    getApprovedDoctors,
+  } ;

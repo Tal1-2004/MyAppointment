@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./BookAppointment.css";
 
 function BookAppointment() {
@@ -6,13 +6,17 @@ function BookAppointment() {
   today.setHours(0, 0, 0, 0);
 
   const [formData, setFormData] = useState({
-    specialty: "",
-    doctorName: "",
-    date: "",
-    time: "",
-    reason: "",
-  });
+  specialty: "",
+  location: "",
+  doctor: "",
+  doctorName: "",
+  date: "",
+  time: "",
+  reason: "",
+  }); 
 
+  const [availableDoctors, setAvailableDoctors] = useState([]);
+  const [doctorsLoading, setDoctorsLoading] = useState(true);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,36 +25,66 @@ function BookAppointment() {
     new Date(today.getFullYear(), today.getMonth(), 1)
   );
 
+  // =========================
+  // LOAD DOCTORS
+  // =========================
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/doctors"
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMessage(
+            data.message || "Could not load doctors."
+          );
+          return;
+        }
+
+        setAvailableDoctors(data.doctors || []);
+      } catch (error) {
+        console.error("Load doctors error:", error);
+
+        setMessage(
+          "Cannot load doctors from the server."
+        );
+      } finally {
+        setDoctorsLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
+  // Specialties prej doktorëve realë
   const specialties = [
-    "General Medicine",
-    "Cardiology",
-    "Dermatology",
-    "Pediatrics",
-    "Neurology",
+    ...new Set(
+      availableDoctors.map(
+        (doctor) => doctor.specialty
+      )
+    ),
+  ];
+  const locations = [
+    "Prishtina",
+    "Prizren",
+    "Peja",
+    "Gjakova",
+    "Ferizaj",
+    "Gjilan",
+    "Mitrovica",
   ];
 
-  const doctors = {
-    "General Medicine": [
-      "Dr. Arben Krasniqi",
-      "Dr. Elira Berisha",
-    ],
-    Cardiology: [
-      "Dr. Leon Gashi",
-      "Dr. Sara Hoxha",
-    ],
-    Dermatology: [
-      "Dr. Arta Shala",
-      "Dr. Dren Morina",
-    ],
-    Pediatrics: [
-      "Dr. Era Kelmendi",
-      "Dr. Luan Berisha",
-    ],
-    Neurology: [
-      "Dr. Nora Gashi",
-      "Dr. Erion Krasniqi",
-    ],
-  };
+
+  // Doktorët e specialty së zgjedhur
+  const filteredDoctors = availableDoctors.filter(
+    (doctor) =>
+      doctor.specialty === formData.specialty &&
+      doctor.location === formData.location
+  );
 
   const times = [
     "09:00",
@@ -61,15 +95,41 @@ function BookAppointment() {
     "15:00",
   ];
 
+  // =========================
+  // FORM
+  // =========================
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+  const { name, value } = e.target;
+
+  setFormData((current) => ({
+    ...current,
+    [name]: value,
+
+    ...(name === "specialty" && {
+      location: "",
+      doctor: "",
+      doctorName: "",
+    }),
+
+    ...(name === "location" && {
+      doctor: "",
+      doctorName: "",
+    }),
+  }));
+};
+
+  const handleDoctorChange = (e) => {
+    const doctorId = e.target.value;
+
+    const selectedDoctor = availableDoctors.find(
+      (doctor) => doctor._id === doctorId
+    );
 
     setFormData((current) => ({
       ...current,
-      [name]: value,
-      ...(name === "specialty" && {
-        doctorName: "",
-      }),
+      doctor: doctorId,
+      doctorName: selectedDoctor?.user?.name || "",
     }));
   };
 
@@ -80,10 +140,13 @@ function BookAppointment() {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
-  const monthName = currentMonth.toLocaleString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
+  const monthName = currentMonth.toLocaleString(
+    "en-US",
+    {
+      month: "long",
+      year: "numeric",
+    }
+  );
 
   const daysInMonth = new Date(
     year,
@@ -91,8 +154,6 @@ function BookAppointment() {
     0
   ).getDate();
 
-  // JavaScript: Sunday = 0
-  // Calendar: Monday = 0
   const firstDayOfMonth =
     (new Date(year, month, 1).getDay() + 6) % 7;
 
@@ -106,9 +167,18 @@ function BookAppointment() {
     calendarDays.push(day);
   }
 
-  const formatDate = (yearValue, monthValue, dayValue) => {
-    const formattedMonth = String(monthValue + 1).padStart(2, "0");
-    const formattedDay = String(dayValue).padStart(2, "0");
+  const formatDate = (
+    yearValue,
+    monthValue,
+    dayValue
+  ) => {
+    const formattedMonth = String(
+      monthValue + 1
+    ).padStart(2, "0");
+
+    const formattedDay = String(
+      dayValue
+    ).padStart(2, "0");
 
     return `${yearValue}-${formattedMonth}-${formattedDay}`;
   };
@@ -116,14 +186,23 @@ function BookAppointment() {
   const selectDate = (day) => {
     if (!day) return;
 
-    const selectedDate = new Date(year, month, day);
+    const selectedDate = new Date(
+      year,
+      month,
+      day
+    );
+
     selectedDate.setHours(0, 0, 0, 0);
 
     if (selectedDate < today) {
       return;
     }
 
-    const dateString = formatDate(year, month, day);
+    const dateString = formatDate(
+      year,
+      month,
+      day
+    );
 
     setFormData((current) => ({
       ...current,
@@ -135,7 +214,11 @@ function BookAppointment() {
   };
 
   const previousMonth = () => {
-    const previous = new Date(year, month - 1, 1);
+    const previous = new Date(
+      year,
+      month - 1,
+      1
+    );
 
     const currentRealMonth = new Date(
       today.getFullYear(),
@@ -159,14 +242,21 @@ function BookAppointment() {
   const isPastDate = (day) => {
     if (!day) return false;
 
-    const date = new Date(year, month, day);
+    const date = new Date(
+      year,
+      month,
+      day
+    );
+
     date.setHours(0, 0, 0, 0);
 
     return date < today;
   };
 
   const isSelectedDate = (day) => {
-    if (!day || !formData.date) return false;
+    if (!day || !formData.date) {
+      return false;
+    }
 
     return (
       formData.date ===
@@ -195,7 +285,7 @@ function BookAppointment() {
 
     const user = JSON.parse(
       localStorage.getItem("user") ||
-      sessionStorage.getItem("user")
+        sessionStorage.getItem("user")
     );
 
     const token =
@@ -209,11 +299,15 @@ function BookAppointment() {
 
     if (
       !formData.specialty ||
+      !formData.location ||
+      !formData.doctor ||
       !formData.doctorName ||
       !formData.date ||
       !formData.time
     ) {
-      setMessage("Please complete all required fields.");
+      setMessage(
+        "Please complete all required fields."
+      );
       return;
     }
 
@@ -232,8 +326,9 @@ function BookAppointment() {
 
           body: JSON.stringify({
             patient: user.id,
-            specialty: formData.specialty,
+            doctor: formData.doctor,
             doctorName: formData.doctorName,
+            specialty: formData.specialty,
             date: formData.date,
             time: formData.time,
             reason: formData.reason,
@@ -245,26 +340,35 @@ function BookAppointment() {
 
       if (!response.ok) {
         setMessage(
-          data.message || "Appointment booking failed."
+          data.message ||
+            "Appointment booking failed."
         );
-
         return;
       }
 
       sessionStorage.setItem(
-      "appointmentSuccess",
-      "Your appointment has been booked successfully!"
+        "appointmentSuccess",
+        "Your appointment has been booked successfully!"
       );
 
       window.location.href = "/";
-      } catch (error) {
-        console.error(error);
+    } catch (error) {
+      console.error(
+        "Appointment booking error:",
+        error
+      );
 
-        setMessage("Cannot connect to the server.");
-      } finally {
-        setIsSubmitting(false);
-      }
+      setMessage(
+        "Cannot connect to the server."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // =========================
+  // JSX
+  // =========================
 
   return (
     <div className="booking-page">
@@ -306,10 +410,13 @@ function BookAppointment() {
               name="specialty"
               value={formData.specialty}
               onChange={handleChange}
+              disabled={doctorsLoading}
               required
             >
               <option value="">
-                Select specialty
+                {doctorsLoading
+                  ? "Loading specialties..."
+                  : "Select specialty"}
               </option>
 
               {specialties.map((specialty) => (
@@ -322,6 +429,35 @@ function BookAppointment() {
               ))}
             </select>
           </div>
+              {/* Qyteti */}
+
+          <div className="booking-group">
+            
+            <label>City</label>
+
+            <select
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              disabled={!formData.specialty}
+              required
+            >
+              <option value="">
+                {!formData.specialty
+                  ? "Select specialty first"
+                  : "Select city"}
+              </option>
+
+              {locations.map((location) => (
+                <option
+                  key={location}
+                  value={location}
+                >
+                  {location}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* DOCTOR */}
 
@@ -329,27 +465,32 @@ function BookAppointment() {
             <label>Doctor</label>
 
             <select
-              name="doctorName"
-              value={formData.doctorName}
-              onChange={handleChange}
-              disabled={!formData.specialty}
+              name="doctor"
+              value={formData.doctor}
+              onChange={handleDoctorChange}
+              disabled={
+                !formData.specialty ||
+                !formData.location ||
+                doctorsLoading
+              }
               required
             >
               <option value="">
-                Select doctor
+                {!formData.specialty
+                  ? "Select specialty first"
+                  : !formData.location
+                    ? "Select city first"
+                    : "Select doctor"}
               </option>
 
-              {formData.specialty &&
-                doctors[formData.specialty].map(
-                  (doctor) => (
-                    <option
-                      key={doctor}
-                      value={doctor}
-                    >
-                      {doctor}
-                    </option>
-                  )
-                )}
+              {filteredDoctors.map((doctor) => (
+                <option
+                  key={doctor._id}
+                  value={doctor._id}
+                >
+                  {doctor.user?.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -361,7 +502,9 @@ function BookAppointment() {
             <button
               type="button"
               className={`date-selector ${
-                formData.date ? "has-date" : ""
+                formData.date
+                  ? "has-date"
+                  : ""
               }`}
               onClick={() =>
                 setCalendarOpen(
@@ -389,7 +532,7 @@ function BookAppointment() {
               </span>
             </button>
 
-            {/* LARGE CALENDAR */}
+            {/* CALENDAR */}
 
             {calendarOpen && (
               <div className="custom-calendar">
@@ -414,7 +557,7 @@ function BookAppointment() {
                     type="button"
                     className="calendar-arrow"
                     onClick={nextMonth}
-                  >
+          >
                     ›
                   </button>
 
@@ -502,9 +645,10 @@ function BookAppointment() {
 
               </div>
             )}
+
           </div>
 
-           
+          {/* TIME */}
 
           <div className="booking-group">
             <label>Time</label>
@@ -530,6 +674,7 @@ function BookAppointment() {
                   {time}
                 </option>
               ))}
+
             </select>
           </div>
 
@@ -561,7 +706,10 @@ function BookAppointment() {
           <button
             type="submit"
             className="booking-submit"
-            disabled={isSubmitting}
+            disabled={
+              isSubmitting ||
+              doctorsLoading
+            }
           >
             {isSubmitting
               ? "Booking..."

@@ -38,6 +38,11 @@ const appointmentSchema = new mongoose.Schema(
       enum: ["upcoming", "completed", "cancelled"],
       default: "upcoming",
     },
+    doctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Doctor",
+      required: true,
+    },
   },
   {
     timestamps: true,

@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import BookAppointment from "./pages/BookAppointment";
 import Doctors from "./pages/Doctors";
 import DoctorRegister from "./pages/DoctorRegister";
+import DoctorDashboard from "./pages/DoctorDashboard";
 
 function App() {
   return (
@@ -37,7 +38,12 @@ function App() {
         path="/doctor-register"
         element={<DoctorRegister />}
       />
+      <Route
+          path="/doctor-dashboard"
+          element={<DoctorDashboard />}
+        />
     </Routes>
+    
   );
 }
 
