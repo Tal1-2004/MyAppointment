@@ -2,6 +2,23 @@ import { useState } from "react";
 import "./Navbar.css";
 
 function Navbar() {
+
+  const handleAppointmentsClick = (e) => {
+  e.preventDefault();
+
+  const user = JSON.parse(
+    localStorage.getItem("user") || sessionStorage.getItem("user")
+  );
+
+  if (!user) {
+    window.location.href = "/login";
+    return;
+    }
+
+    window.location.href = "/book-appointment";
+  };
+
+
   const [profileOpen, setProfileOpen] = useState(false);
 
   const user = JSON.parse(
@@ -29,7 +46,12 @@ function Navbar() {
       <div className="navbar-links">
         <a href="/">Home</a>
         <a href="#services">Services</a>
-        <a href="#appointments">Appointments</a>
+        <a
+          href="/appointments"
+          onClick={handleAppointmentsClick}
+        >
+          Appointments
+        </a>
         <a href="#about">About Us</a>
         <a href="#contact">Contact</a>
       </div>
@@ -91,7 +113,11 @@ function Navbar() {
           </a>
         )}
 
-        <a href="/book-appointment" className="book-btn">
+        <a
+          href="/book-appointment"
+          className="book-btn"
+          onClick={handleAppointmentsClick}
+        >
           Book Appointment
         </a>
       </div>

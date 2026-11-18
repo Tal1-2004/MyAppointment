@@ -3,6 +3,20 @@ import "./Home.css";
 
 
 function Home() {
+
+  const handleBookAppointment = () => {
+  const user = JSON.parse(
+    localStorage.getItem("user") || sessionStorage.getItem("user")
+  );
+
+  if (!user) {
+    window.location.href = "/login";
+    return;
+  }
+
+  window.location.href = "/book-appointment";
+  };
+
   const sliderRef = useRef(null);
   const [appointmentSuccess, setAppointmentSuccess] = useState("");
 
@@ -62,7 +76,7 @@ function Home() {
   return (
     <main>
             {appointmentSuccess && (
-        <div className="appointment-success-toast">
+          <div className="appointment-success-toast">
           <div className="success-toast-icon">✓</div>
 
           <div className="success-toast-content">
@@ -95,7 +109,10 @@ function Home() {
           </p>
 
           <div className="hero-buttons">
-            <button className="primary-btn">
+            <button
+              className="primary-btn"
+              onClick={handleBookAppointment}
+            >
               Book Appointment
             </button>
 
@@ -237,7 +254,10 @@ function Home() {
                       View Profile
                     </button>
 
-                    <button className="doctor-book-btn">
+                    <button
+                      className="doctor-book-btn"
+                      onClick={handleBookAppointment}
+                    >
                       Book
                     </button>
                   </div>
@@ -269,7 +289,10 @@ function Home() {
                       View Profile
                     </button>
 
-                    <button className="doctor-book-btn">
+                    <button
+                      className="doctor-book-btn"
+                      onClick={handleBookAppointment}
+                    >
                       Book
                     </button>
                   </div>
@@ -301,7 +324,10 @@ function Home() {
                       View Profile
                     </button>
 
-                    <button className="doctor-book-btn">
+                    <button
+                      className="doctor-book-btn"
+                      onClick={handleBookAppointment}
+                    >
                       Book
                     </button>
                   </div>
@@ -333,7 +359,10 @@ function Home() {
                       View Profile
                     </button>
 
-                    <button className="doctor-book-btn">
+                    <button
+                      className="doctor-book-btn"
+                      onClick={handleBookAppointment}
+                    >
                       Book
                     </button>
                   </div>
@@ -425,7 +454,9 @@ function Home() {
           Find the right doctor and schedule your visit today.
         </p>
 
-        <button>Book Appointment</button>
+        <button onClick={handleBookAppointment}>
+          Book Appointment
+        </button>
       </section>
 
       {/* FOOTER */}
