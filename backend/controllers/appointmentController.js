@@ -102,7 +102,54 @@ const createAppointment = async (req, res) => {
     });
   }
 };
+const getDoctorAppointments = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Gjeje profilin Doctor për user-in që është login
+    const doctorProfile = await Doctor.findOne({
+      user: userId,
+    });
+
+    if (!doctorProfile) {
+      return res.status(404).json({
+        message: "Doctor profile not found",
+      });
+    }
+
+    // Merr vetëm appointment-et e këtij doktori
+    const appointments = await Appointment.find({
+      doctor: doctorProfile._id,
+    })
+      .populate("patient", "name email")
+      .sort({
+        date: 1,
+        time: 1,
+      });
+
+    return res.status(200).json({
+      doctor: {
+        id: doctorProfile._id,
+        verificationStatus:
+          doctorProfile.verificationStatus,
+      },
+      appointments,
+    });
+  } catch (error) {
+    console.error(
+      "Get doctor appointments error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
 
 module.exports = {
   createAppointment,
+  getDoctorAppointments,
 };

@@ -95,6 +95,41 @@ function BookAppointment() {
     "15:00",
   ];
 
+  const getAvailableTimes = () => {
+  if (!formData.date) {
+    return [];
+  }
+
+  const now = new Date();
+
+  const todayDate = formatDate(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  // Nëse është ditë tjetër në të ardhmen,
+  // krejt oraret janë në dispozicion.
+  if (formData.date !== todayDate) {
+    return times;
+  }
+
+    // Nëse është sot, largo orët që kanë kaluar.
+    const currentMinutes =
+      now.getHours() * 60 + now.getMinutes();
+
+    return times.filter((time) => {
+      const [hours, minutes] = time
+        .split(":")
+        .map(Number);
+
+      const appointmentMinutes =
+        hours * 60 + minutes;
+
+      return appointmentMinutes > currentMinutes;
+    });
+  };
+
   // =========================
   // FORM
   // =========================
@@ -182,6 +217,8 @@ function BookAppointment() {
 
     return `${yearValue}-${formattedMonth}-${formattedDay}`;
   };
+  
+  const availableTimes = getAvailableTimes();
 
   const selectDate = (day) => {
     if (!day) return;
@@ -647,7 +684,6 @@ function BookAppointment() {
             )}
 
           </div>
-
           {/* TIME */}
 
           <div className="booking-group">
@@ -657,16 +693,21 @@ function BookAppointment() {
               name="time"
               value={formData.time}
               onChange={handleChange}
-              disabled={!formData.date}
+              disabled={
+                !formData.date ||
+                availableTimes.length === 0
+              }
               required
             >
               <option value="">
-                {formData.date
-                  ? "Select time"
-                  : "Choose a date first"}
+                {!formData.date
+                  ? "Choose a date first"
+                  : availableTimes.length === 0
+                    ? "No available times today"
+                    : "Select time"}
               </option>
 
-              {times.map((time) => (
+              {availableTimes.map((time) => (
                 <option
                   key={time}
                   value={time}
@@ -674,7 +715,6 @@ function BookAppointment() {
                   {time}
                 </option>
               ))}
-
             </select>
           </div>
 

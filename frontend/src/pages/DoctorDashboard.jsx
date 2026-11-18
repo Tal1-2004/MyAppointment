@@ -1,10 +1,143 @@
+import { useEffect, useState } from "react";
 import "./DoctorDashboard.css";
 
 function DoctorDashboard() {
   const user = JSON.parse(
     localStorage.getItem("user") ||
-    sessionStorage.getItem("user")
+      sessionStorage.getItem("user")
   );
+
+  const [appointments, setAppointments] = useState([]);
+  const [verificationStatus, setVerificationStatus] =
+    useState("pending");
+
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+
+  // =========================
+  // LOAD APPOINTMENTS
+  // =========================
+
+  useEffect(() => {
+    const fetchDoctorAppointments = async () => {
+      if (!user?.id) {
+        window.location.href = "/login";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/appointments/doctor/user/${user.id}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMessage(
+            data.message ||
+              "Could not load appointments."
+          );
+          return;
+        }
+
+        setAppointments(data.appointments || []);
+
+        setVerificationStatus(
+          data.doctor?.verificationStatus ||
+            "pending"
+        );
+      } catch (error) {
+        console.error(
+          "Load doctor appointments error:",
+          error
+        );
+
+        setMessage(
+          "Cannot load appointments from the server."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctorAppointments();
+  }, [user?.id]);
+
+  // =========================
+  // DATE HELPERS
+  // =========================
+
+  const getLocalDateString = (dateValue) => {
+    const date = new Date(dateValue);
+
+    const year = date.getFullYear();
+
+    const month = String(
+      date.getMonth() + 1
+    ).padStart(2, "0");
+
+    const day = String(
+      date.getDate()
+    ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const todayString = getLocalDateString(
+    new Date()
+  );
+
+  // =========================
+  // APPOINTMENT STATISTICS
+  // =========================
+
+  const todayAppointments = appointments.filter(
+    (appointment) =>
+      getLocalDateString(appointment.date) ===
+        todayString &&
+      appointment.status !== "cancelled"
+  );
+
+  const upcomingAppointments = appointments.filter(
+    (appointment) =>
+      getLocalDateString(appointment.date) >=
+        todayString &&
+      appointment.status === "upcoming"
+  );
+
+  const uniquePatientIds = new Set(
+    appointments
+      .map(
+        (appointment) =>
+          appointment.patient?._id
+      )
+      .filter(Boolean)
+  );
+
+  const totalPatients = uniquePatientIds.size;
+
+  // Vetëm 3 appointment-et e para në Dashboard
+  const dashboardAppointments =
+    upcomingAppointments.slice(0, 3);
+
+  // =========================
+  // FORMAT DATE
+  // =========================
+
+  const formatAppointmentDate = (dateValue) => {
+    return new Date(dateValue).toLocaleDateString(
+      "en-GB",
+      {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }
+    );
+  };
+
+  // =========================
+  // LOGOUT
+  // =========================
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -16,14 +149,26 @@ function DoctorDashboard() {
     window.location.href = "/";
   };
 
+  const verificationText =
+    verificationStatus === "approved"
+      ? "Approved"
+      : verificationStatus === "rejected"
+        ? "Rejected"
+        : "Pending";
+
   return (
     <div className="doctor-dashboard">
 
       {/* SIDEBAR */}
+
       <aside className="doctor-sidebar">
 
         <div className="doctor-sidebar-logo">
-          <img src="/Designer.png" alt="MyAppointment logo" />
+          <img
+            src="/Designer.png"
+            alt="MyAppointment logo"
+          />
+
           <span>MyAppointment</span>
         </div>
 
@@ -58,8 +203,8 @@ function DoctorDashboard() {
 
       </aside>
 
-
       {/* MAIN CONTENT */}
+
       <main className="doctor-dashboard-content">
 
         <header className="doctor-dashboard-header">
@@ -67,7 +212,8 @@ function DoctorDashboard() {
             <p>Doctor Dashboard</p>
 
             <h1>
-              Welcome back, {user?.name || "Doctor"}
+              Welcome back,{" "}
+              {user?.name || "Doctor"}
             </h1>
 
             <span>
@@ -77,38 +223,65 @@ function DoctorDashboard() {
 
           <div className="doctor-dashboard-user">
             <div className="dashboard-avatar">
-              {user?.name?.charAt(0).toUpperCase() || "D"}
+              {user?.name
+                ?.charAt(0)
+                .toUpperCase() || "D"}
             </div>
 
             <div>
-              <strong>{user?.name || "Doctor"}</strong>
+              <strong>
+                {user?.name || "Doctor"}
+              </strong>
+
               <span>Doctor</span>
             </div>
           </div>
         </header>
 
+        {/* ERROR */}
+
+        {message && (
+          <div className="dashboard-error">
+            <span>⚠</span>
+            {message}
+          </div>
+        )}
 
         {/* VERIFICATION */}
 
-        <section className="verification-card">
+        <section
+          className={`verification-card verification-${verificationStatus}`}
+        >
           <div>
-            <span className="verification-icon">✓</span>
+            <span className="verification-icon">
+              {verificationStatus ===
+              "approved"
+                ? "✓"
+                : verificationStatus ===
+                    "rejected"
+                  ? "×"
+                  : "!"}
+            </span>
           </div>
 
           <div>
             <h3>Profile verification</h3>
 
             <p>
-              Your professional documents have been submitted
-              and are waiting for verification.
+              {verificationStatus ===
+              "approved"
+                ? "Your doctor profile has been verified and is visible to patients."
+                : verificationStatus ===
+                    "rejected"
+                  ? "Your verification was rejected. Please review your professional documents."
+                  : "Your professional documents have been submitted and are waiting for verification."}
             </p>
           </div>
 
           <span className="verification-status">
-            Pending
+            {verificationText}
           </span>
         </section>
-
 
         {/* STATISTICS */}
 
@@ -119,7 +292,12 @@ function DoctorDashboard() {
 
             <div>
               <p>Today's Appointments</p>
-              <h2>0</h2>
+
+              <h2>
+                {loading
+                  ? "..."
+                  : todayAppointments.length}
+              </h2>
             </div>
           </div>
 
@@ -128,7 +306,12 @@ function DoctorDashboard() {
 
             <div>
               <p>Upcoming</p>
-              <h2>0</h2>
+
+              <h2>
+                {loading
+                  ? "..."
+                  : upcomingAppointments.length}
+              </h2>
             </div>
           </div>
 
@@ -137,12 +320,16 @@ function DoctorDashboard() {
 
             <div>
               <p>Total Patients</p>
-              <h2>0</h2>
+
+              <h2>
+                {loading
+                  ? "..."
+                  : totalPatients}
+              </h2>
             </div>
           </div>
 
         </section>
-
 
         {/* APPOINTMENTS */}
 
@@ -151,26 +338,126 @@ function DoctorDashboard() {
           <div className="dashboard-section-header">
             <div>
               <h2>Upcoming Appointments</h2>
-              <p>Your next scheduled patient visits.</p>
+
+              <p>
+                Your next scheduled patient
+                visits.
+              </p>
             </div>
 
-            <button>
+            <button type="button">
               View All
             </button>
           </div>
 
-          <div className="empty-appointments">
-            <div>📅</div>
+          {loading ? (
+            <div className="empty-appointments">
+              <div>⏳</div>
 
-            <h3>No upcoming appointments</h3>
+              <h3>Loading appointments...</h3>
+            </div>
+          ) : dashboardAppointments.length === 0 ? (
+            <div className="empty-appointments">
+              <div>📅</div>
 
-            <p>
-              New appointments from patients will appear here.
-            </p>
-          </div>
+              <h3>
+                No upcoming appointments
+              </h3>
+
+              <p>
+                New appointments from patients
+                will appear here.
+              </p>
+            </div>
+          ) : (
+            <div className="dashboard-appointments-list">
+
+              {dashboardAppointments.map(
+                (appointment) => (
+                  <article
+                    className="dashboard-appointment-card"
+                    key={appointment._id}
+                  >
+                    <div className="appointment-patient">
+                      <div className="patient-avatar">
+                        {appointment.patient?.name
+                          ?.charAt(0)
+                          .toUpperCase() ||
+                          "P"}
+                      </div>
+
+                      <div>
+                        <strong>
+                          {appointment.patient
+                            ?.name ||
+                            "Patient"}
+                        </strong>
+
+                        <span>
+                          {appointment.patient
+                            ?.email ||
+                            "No email"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="appointment-details">
+
+                      <div>
+                        <span className="detail-label">
+                          Date
+                        </span>
+
+                        <strong>
+                          {formatAppointmentDate(
+                            appointment.date
+                          )}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span className="detail-label">
+                          Time
+                        </span>
+
+                        <strong>
+                          {appointment.time}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span className="detail-label">
+                          Status
+                        </span>
+
+                        <span
+                          className={`appointment-status appointment-status-${appointment.status}`}
+                        >
+                          {appointment.status}
+                        </span>
+                      </div>
+
+                    </div>
+
+                    <div className="appointment-reason">
+                      <span className="detail-label">
+                        Reason for visit
+                      </span>
+
+                      <p>
+                        {appointment.reason?.trim()
+                          ? appointment.reason
+                          : "No reason was provided by the patient."}
+                      </p>
+                    </div>
+                  </article>
+                )
+              )}
+
+            </div>
+          )}
 
         </section>
-
 
         {/* QUICK ACTIONS */}
 
@@ -179,27 +466,41 @@ function DoctorDashboard() {
           <div className="dashboard-section-header">
             <div>
               <h2>Quick Actions</h2>
-              <p>Manage your doctor profile and schedule.</p>
+
+              <p>
+                Manage your doctor profile and
+                schedule.
+              </p>
             </div>
           </div>
 
           <div className="doctor-quick-actions">
 
-            <button>
+            <button type="button">
               <span>🕒</span>
 
               <div>
-                <strong>Manage Availability</strong>
-                <p>Set your available days and hours.</p>
+                <strong>
+                  Manage Availability
+                </strong>
+
+                <p>
+                  Set your available days and
+                  hours.
+                </p>
               </div>
             </button>
 
-            <button>
+            <button type="button">
               <span>👤</span>
 
               <div>
                 <strong>Edit Profile</strong>
-                <p>Update your professional information.</p>
+
+                <p>
+                  Update your professional
+                  information.
+                </p>
               </div>
             </button>
 

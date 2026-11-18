@@ -21,20 +21,17 @@ function Home() {
   const [appointmentSuccess, setAppointmentSuccess] = useState("");
 
   useEffect(() => {
-    const successMessage = sessionStorage.getItem(
-      "appointmentSuccess"
-    );
+    const successMessage = sessionStorage.getItem("appointmentSuccess");
 
     if (!successMessage) return;
 
-    setAppointmentSuccess(successMessage);
     sessionStorage.removeItem("appointmentSuccess");
 
-    const timer = setTimeout(() => {
+    setAppointmentSuccess(successMessage);
+
+    setTimeout(() => {
       setAppointmentSuccess("");
     }, 5000);
-
-    return () => clearTimeout(timer);
   }, []);
 
   const scrollServices = (direction) => {
