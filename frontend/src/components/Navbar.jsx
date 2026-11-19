@@ -60,9 +60,11 @@ function Navbar() {
 
       <div className="navbar-actions">
 
-        <a href="/for-doctors" className="doctor-nav-btn">
-          🩺 For Doctors
-        </a>
+        {!user && (
+            <a href="/for-doctors" className="doctor-nav-btn">
+              🩺 For Doctors
+            </a>
+          )}
 
         {user ? (
           <div className="profile-menu">

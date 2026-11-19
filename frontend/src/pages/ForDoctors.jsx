@@ -29,10 +29,7 @@ function ForDoctors() {
               Apply as a Doctor
             </Link>
 
-            <Link
-              to="/login"
-              className="doctor-login-btn"
-            >
+            <Link to="/doctor-login"      className="doctor-login-btn">
               Doctor Login
             </Link>
           </div>

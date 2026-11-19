@@ -10,6 +10,7 @@ import DoctorRegister from "./pages/DoctorRegister";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import ForDoctors from "./pages/ForDoctors";
 import AdminDashboard from "./pages/AdminDashboard";
+import DoctorLogin from "./pages/DoctorLogin";
 
 function App() {
   return (
@@ -56,6 +57,10 @@ function App() {
           <Route
       path="/for-doctors"
       element={<ForDoctors />}
+      />
+        <Route
+      path="/doctor-login"
+      element={<DoctorLogin />}
     />
     </Routes>
     
