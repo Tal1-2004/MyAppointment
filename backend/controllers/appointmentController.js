@@ -147,9 +147,80 @@ const getDoctorAppointments = async (req, res) => {
     });
   }
 };
+const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Vetëm këto statuse mund t'i vendos doktori
+    const allowedStatuses = ["completed", "delayed"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid appointment status",
+      });
+    }
+
+    // Gjeje profilin e doktorit që është login
+    const doctorProfile = await Doctor.findOne({
+      user: req.user._id,
+    });
+
+    if (!doctorProfile) {
+      return res.status(404).json({
+        message: "Doctor profile not found",
+      });
+    }
+
+    // Gjeje appointment-in
+    const appointment = await Appointment.findById(id);
+
+    if (!appointment) {
+      return res.status(404).json({
+        message: "Appointment not found",
+      });
+    }
+
+    // Sigurohu që appointment-i i takon këtij doktori
+    if (
+      appointment.doctor.toString() !==
+      doctorProfile._id.toString()
+    ) {
+      return res.status(403).json({
+        message: "You cannot manage this appointment",
+      });
+    }
+
+    if (appointment.status === "cancelled") {
+      return res.status(400).json({
+        message: "Cancelled appointments cannot be updated",
+      });
+    }
+
+    appointment.status = status;
+
+    await appointment.save();
+
+    return res.status(200).json({
+      message: `Appointment marked as ${status}`,
+      appointment,
+    });
+  } catch (error) {
+    console.error(
+      "Update appointment status error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
 
 
 module.exports = {
   createAppointment,
   getDoctorAppointments,
+  updateAppointmentStatus,
 };

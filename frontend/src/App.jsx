@@ -53,6 +53,10 @@ function App() {
         path="/admin-dashboard"
         element={<AdminDashboard />}
       />
+          <Route
+      path="/for-doctors"
+      element={<ForDoctors />}
+    />
     </Routes>
     
   );

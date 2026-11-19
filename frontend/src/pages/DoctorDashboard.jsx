@@ -7,7 +7,12 @@ function DoctorDashboard() {
       sessionStorage.getItem("user")
   );
 
+  const token =
+    localStorage.getItem("token") ||
+    sessionStorage.getItem("token");
+
   const [appointments, setAppointments] = useState([]);
+
   const [verificationStatus, setVerificationStatus] =
     useState("pending");
 
@@ -116,7 +121,7 @@ function DoctorDashboard() {
 
   const totalPatients = uniquePatientIds.size;
 
-  // Vetëm 3 appointment-et e para në Dashboard
+  // Vetëm 3 appointment-et e para
   const dashboardAppointments =
     upcomingAppointments.slice(0, 3);
 
@@ -136,6 +141,73 @@ function DoctorDashboard() {
   };
 
   // =========================
+  // UPDATE APPOINTMENT STATUS
+  // =========================
+
+  const updateAppointmentStatus = async (
+    id,
+    status
+  ) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/appointments/${id}/status`,
+        {
+          method: "PATCH",
+
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+
+          body: JSON.stringify({
+            status,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(
+          data.message ||
+            "Could not update appointment."
+        );
+        return;
+      }
+
+      setAppointments((currentAppointments) =>
+        currentAppointments.map((appointment) =>
+          appointment._id === id
+            ? {
+                ...appointment,
+                status: data.appointment.status,
+              }
+            : appointment
+        )
+      );
+
+      if (status === "completed") {
+        setMessage(
+          "Appointment marked as completed."
+        );
+      } else {
+        setMessage(
+          "Appointment marked as delayed."
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Update appointment status error:",
+        error
+      );
+
+      setMessage(
+        "Cannot connect to the server."
+      );
+    }
+  };
+
+  // =========================
   // LOGOUT
   // =========================
 
@@ -149,6 +221,10 @@ function DoctorDashboard() {
     window.location.href = "/";
   };
 
+  // =========================
+  // VERIFICATION TEXT
+  // =========================
+
   const verificationText =
     verificationStatus === "approved"
       ? "Approved"
@@ -159,7 +235,9 @@ function DoctorDashboard() {
   return (
     <div className="doctor-dashboard">
 
-      {/* SIDEBAR */}
+      {/* =========================
+          SIDEBAR
+      ========================= */}
 
       <aside className="doctor-sidebar">
 
@@ -173,6 +251,7 @@ function DoctorDashboard() {
         </div>
 
         <nav className="doctor-dashboard-nav">
+
           <button className="active">
             🏠 Dashboard
           </button>
@@ -192,6 +271,7 @@ function DoctorDashboard() {
           <button>
             ⚙ Settings
           </button>
+
         </nav>
 
         <button
@@ -203,11 +283,16 @@ function DoctorDashboard() {
 
       </aside>
 
-      {/* MAIN CONTENT */}
+      {/* =========================
+          MAIN CONTENT
+      ========================= */}
 
       <main className="doctor-dashboard-content">
 
+        {/* HEADER */}
+
         <header className="doctor-dashboard-header">
+
           <div>
             <p>Doctor Dashboard</p>
 
@@ -222,6 +307,7 @@ function DoctorDashboard() {
           </div>
 
           <div className="doctor-dashboard-user">
+
             <div className="dashboard-avatar">
               {user?.name
                 ?.charAt(0)
@@ -235,10 +321,12 @@ function DoctorDashboard() {
 
               <span>Doctor</span>
             </div>
+
           </div>
+
         </header>
 
-        {/* ERROR */}
+        {/* MESSAGE */}
 
         {message && (
           <div className="dashboard-error">
@@ -247,20 +335,22 @@ function DoctorDashboard() {
           </div>
         )}
 
-        {/* VERIFICATION */}
+        {/* =========================
+            VERIFICATION
+        ========================= */}
 
         <section
           className={`verification-card verification-${verificationStatus}`}
         >
           <div>
             <span className="verification-icon">
-              {verificationStatus ===
-              "approved"
+
+              {verificationStatus === "approved"
                 ? "✓"
-                : verificationStatus ===
-                    "rejected"
+                : verificationStatus === "rejected"
                   ? "×"
                   : "!"}
+
             </span>
           </div>
 
@@ -268,11 +358,9 @@ function DoctorDashboard() {
             <h3>Profile verification</h3>
 
             <p>
-              {verificationStatus ===
-              "approved"
+              {verificationStatus === "approved"
                 ? "Your doctor profile has been verified and is visible to patients."
-                : verificationStatus ===
-                    "rejected"
+                : verificationStatus === "rejected"
                   ? "Your verification was rejected. Please review your professional documents."
                   : "Your professional documents have been submitted and are waiting for verification."}
             </p>
@@ -281,13 +369,17 @@ function DoctorDashboard() {
           <span className="verification-status">
             {verificationText}
           </span>
+
         </section>
 
-        {/* STATISTICS */}
+        {/* =========================
+            STATISTICS
+        ========================= */}
 
         <section className="doctor-stats">
 
           <div className="doctor-stat-card">
+
             <span>📅</span>
 
             <div>
@@ -299,9 +391,11 @@ function DoctorDashboard() {
                   : todayAppointments.length}
               </h2>
             </div>
+
           </div>
 
           <div className="doctor-stat-card">
+
             <span>🕒</span>
 
             <div>
@@ -313,9 +407,11 @@ function DoctorDashboard() {
                   : upcomingAppointments.length}
               </h2>
             </div>
+
           </div>
 
           <div className="doctor-stat-card">
+
             <span>👥</span>
 
             <div>
@@ -327,36 +423,45 @@ function DoctorDashboard() {
                   : totalPatients}
               </h2>
             </div>
+
           </div>
 
         </section>
 
-        {/* APPOINTMENTS */}
+        {/* =========================
+            APPOINTMENTS
+        ========================= */}
 
         <section className="dashboard-section">
 
           <div className="dashboard-section-header">
+
             <div>
               <h2>Upcoming Appointments</h2>
 
               <p>
-                Your next scheduled patient
-                visits.
+                Your next scheduled patient visits.
               </p>
             </div>
 
             <button type="button">
               View All
             </button>
+
           </div>
 
           {loading ? (
+
             <div className="empty-appointments">
               <div>⏳</div>
 
-              <h3>Loading appointments...</h3>
+              <h3>
+                Loading appointments...
+              </h3>
             </div>
+
           ) : dashboardAppointments.length === 0 ? (
+
             <div className="empty-appointments">
               <div>📅</div>
 
@@ -369,16 +474,23 @@ function DoctorDashboard() {
                 will appear here.
               </p>
             </div>
+
           ) : (
+
             <div className="dashboard-appointments-list">
 
               {dashboardAppointments.map(
                 (appointment) => (
+
                   <article
                     className="dashboard-appointment-card"
                     key={appointment._id}
                   >
+
+                    {/* PATIENT */}
+
                     <div className="appointment-patient">
+
                       <div className="patient-avatar">
                         {appointment.patient?.name
                           ?.charAt(0)
@@ -388,18 +500,19 @@ function DoctorDashboard() {
 
                       <div>
                         <strong>
-                          {appointment.patient
-                            ?.name ||
+                          {appointment.patient?.name ||
                             "Patient"}
                         </strong>
 
                         <span>
-                          {appointment.patient
-                            ?.email ||
+                          {appointment.patient?.email ||
                             "No email"}
                         </span>
                       </div>
+
                     </div>
+
+                    {/* DETAILS */}
 
                     <div className="appointment-details">
 
@@ -439,7 +552,10 @@ function DoctorDashboard() {
 
                     </div>
 
+                    {/* REASON */}
+
                     <div className="appointment-reason">
+
                       <span className="detail-label">
                         Reason for visit
                       </span>
@@ -449,8 +565,43 @@ function DoctorDashboard() {
                           ? appointment.reason
                           : "No reason was provided by the patient."}
                       </p>
+
                     </div>
+
+                    {/* ACTIONS */}
+
+                    <div className="doctor-appointment-actions">
+
+                      <button
+                        type="button"
+                        className="complete-appointment-btn"
+                        onClick={() =>
+                          updateAppointmentStatus(
+                            appointment._id,
+                            "completed"
+                          )
+                        }
+                      >
+                        ✓ Mark Completed
+                      </button>
+
+                      <button
+                        type="button"
+                        className="delay-appointment-btn"
+                        onClick={() =>
+                          updateAppointmentStatus(
+                            appointment._id,
+                            "delayed"
+                          )
+                        }
+                      >
+                        🕒 Mark Delayed
+                      </button>
+
+                    </div>
+
                   </article>
+
                 )
               )}
 
@@ -459,11 +610,14 @@ function DoctorDashboard() {
 
         </section>
 
-        {/* QUICK ACTIONS */}
+        {/* =========================
+            QUICK ACTIONS
+        ========================= */}
 
         <section className="dashboard-section">
 
           <div className="dashboard-section-header">
+
             <div>
               <h2>Quick Actions</h2>
 
@@ -472,11 +626,13 @@ function DoctorDashboard() {
                 schedule.
               </p>
             </div>
+
           </div>
 
           <div className="doctor-quick-actions">
 
             <button type="button">
+
               <span>🕒</span>
 
               <div>
@@ -489,19 +645,24 @@ function DoctorDashboard() {
                   hours.
                 </p>
               </div>
+
             </button>
 
             <button type="button">
+
               <span>👤</span>
 
               <div>
-                <strong>Edit Profile</strong>
+                <strong>
+                  Edit Profile
+                </strong>
 
                 <p>
                   Update your professional
                   information.
                 </p>
               </div>
+
             </button>
 
           </div>
@@ -509,6 +670,7 @@ function DoctorDashboard() {
         </section>
 
       </main>
+
     </div>
   );
 }
