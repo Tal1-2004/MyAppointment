@@ -46,17 +46,23 @@ function Navbar() {
       <div className="navbar-links">
         <a href="/">Home</a>
         <a href="#services">Services</a>
+
         <a
           href="/appointments"
           onClick={handleAppointmentsClick}
         >
           Appointments
         </a>
+
         <a href="#about">About Us</a>
         <a href="#contact">Contact</a>
       </div>
 
       <div className="navbar-actions">
+
+        <a href="/for-doctors" className="doctor-nav-btn">
+          🩺 For Doctors
+        </a>
 
         {user ? (
           <div className="profile-menu">

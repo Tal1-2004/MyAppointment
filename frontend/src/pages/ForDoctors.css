@@ -1,0 +1,136 @@
+.for-doctors-page {
+  min-height: 100vh;
+  background: #f0fdf7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.for-doctors-container {
+  width: 100%;
+  max-width: 950px;
+  background: white;
+  border-radius: 24px;
+  padding: 70px 60px;
+  box-shadow: 0 15px 45px rgba(15, 23, 42, 0.08);
+  text-align: center;
+}
+
+.for-doctors-content {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.for-doctors-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+
+  background: #dcfce7;
+  color: #15803d;
+
+  border-radius: 30px;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.for-doctors-content h1 {
+  margin: 0 0 18px;
+
+  color: #0f172a;
+  font-size: 42px;
+  line-height: 1.15;
+}
+
+.for-doctors-content p {
+  max-width: 620px;
+  margin: 0 auto 30px;
+
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.for-doctors-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.apply-doctor-btn,
+.doctor-login-btn {
+  display: inline-block;
+  padding: 13px 22px;
+
+  border-radius: 9px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.apply-doctor-btn {
+  background: #16a34a;
+  border: 1px solid #16a34a;
+  color: white;
+}
+
+.apply-doctor-btn:hover {
+  background: #15803d;
+  border-color: #15803d;
+  transform: translateY(-1px);
+}
+
+.doctor-login-btn {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.doctor-login-btn:hover {
+  border-color: #16a34a;
+  color: #16a34a;
+  background: #f0fdf4;
+}
+
+.for-doctors-back {
+  display: inline-block;
+
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+
+  text-decoration: none;
+}
+
+.for-doctors-back:hover {
+  color: #16a34a;
+}
+
+@media (max-width: 700px) {
+  .for-doctors-page {
+    padding: 30px 16px;
+  }
+
+  .for-doctors-container {
+    padding: 45px 22px;
+  }
+
+  .for-doctors-content h1 {
+    font-size: 32px;
+  }
+
+  .for-doctors-actions {
+    flex-direction: column;
+  }
+
+  .apply-doctor-btn,
+  .doctor-login-btn {
+    width: 100%;
+  }
+}
