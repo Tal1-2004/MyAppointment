@@ -1,0 +1,408 @@
+* {
+  box-sizing: border-box;
+}
+
+.admin-dashboard {
+  min-height: 100vh;
+  padding: 45px 7%;
+  background:
+    linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%);
+  color: #0f172a;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.admin-header {
+  max-width: 1200px;
+  margin: 0 auto 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 25px 30px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+}
+
+.admin-header h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+  color: #0f172a;
+}
+
+.admin-header p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.admin-header button {
+  padding: 9px 16px;
+
+  background: #ffffff;
+  color: #dc2626;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.admin-header button:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.admin-message {
+  max-width: 1200px;
+  margin: 0 auto 25px;
+
+  padding: 13px 16px;
+
+  background: #f0fdf4;
+  color: #15803d;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 9px;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.admin-section {
+  max-width: 1200px;
+  margin: 0 auto 35px;
+
+  padding: 28px;
+
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+}
+
+.admin-section h2 {
+  margin: 0 0 24px;
+  padding-bottom: 14px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  font-size: 20px;
+  color: #1e293b;
+}
+
+.admin-section > p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* =========================
+   DOCTOR CARDS
+========================= */
+
+.admin-doctor-card {
+  position: relative;
+
+  padding: 22px 24px;
+  margin-bottom: 16px;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #22c55e;
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+
+  transition: 0.2s ease;
+}
+
+.admin-doctor-card:last-child {
+  margin-bottom: 0;
+}
+
+.admin-doctor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
+.admin-doctor-card h3 {
+  margin: 0 0 15px;
+
+  font-size: 20px;
+  color: #0f172a;
+}
+
+.admin-doctor-card p {
+  margin: 7px 0;
+
+  color: #64748b;
+  font-size: 14px;
+}
+
+.admin-doctor-card strong {
+  color: #334155;
+  font-weight: 600;
+}
+
+/* =========================
+   APPROVE / REJECT
+========================= */
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 20px;
+  padding-top: 16px;
+
+  border-top: 1px solid #f1f5f9;
+}
+
+.admin-actions button {
+  min-width: 100px;
+  padding: 9px 18px;
+
+  border: none;
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* APPROVE */
+
+.admin-actions button:first-child {
+  background: #16a34a;
+  color: white;
+}
+
+.admin-actions button:first-child:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+}
+
+/* REJECT */
+
+.admin-actions button:last-child {
+  background: #fff1f2;
+  color: #dc2626;
+
+  border: 1px solid #fecdd3;
+}
+
+.admin-actions button:last-child:hover {
+  background: #dc2626;
+  color: white;
+}
+
+/* =========================
+   REMOVE DOCTOR
+========================= */
+
+.remove-doctor-btn {
+  margin-top: 18px;
+  padding: 9px 15px;
+
+  background: white;
+  color: #dc2626;
+
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.remove-doctor-btn:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+  .admin-dashboard {
+    padding: 20px 15px;
+  }
+
+  .admin-header {
+    padding: 20px;
+
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .admin-header h1 {
+    font-size: 25px;
+  }
+
+  .admin-section {
+    padding: 20px;
+  }
+
+  .admin-doctor-card {
+    padding: 18px;
+  }
+
+  .admin-actions {
+    flex-direction: column;
+  }
+
+  .admin-actions button {
+    width: 100%;
+  }
+}
+/* =========================
+   APPOINTMENTS TABLE
+========================= */
+
+.appointments-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+}
+
+.appointments-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.appointments-table thead {
+  background: #f8fafc;
+}
+
+.appointments-table th {
+  padding: 14px 16px;
+  text-align: left;
+
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.appointments-table td {
+  padding: 15px 16px;
+
+  color: #475569;
+  font-size: 14px;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.appointments-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.appointments-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* PATIENT */
+
+.patient-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.patient-cell strong {
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.patient-cell span {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+/* STATUS */
+
+.appointment-status {
+  display: inline-block;
+
+  padding: 5px 10px;
+  border-radius: 20px;
+
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.appointment-status.upcoming {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.appointment-status.completed {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.appointment-status.cancelled {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .appointments-table-wrapper {
+    overflow-x: auto;
+  }
+}
+.cancel-appointment-btn {
+  padding: 7px 12px;
+  background: white;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.cancel-appointment-btn:hover {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+}
+
+.no-action {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+}

@@ -59,11 +59,13 @@ function Login() {
         localStorage.removeItem("user");
       }
 
-      if (data.user.role === "doctor") {
-            window.location.href = "/doctor-dashboard";
-          } else {
-            window.location.href = "/";
-          }
+      if (data.user.role === "admin") {
+          window.location.href = "/admin-dashboard";
+        } else if (data.user.role === "doctor") {
+          window.location.href = "/doctor-dashboard";
+        } else {
+          window.location.href = "/";
+        }
     } catch (error) {
       console.error(error);
       setMessage("Cannot connect to the server.");

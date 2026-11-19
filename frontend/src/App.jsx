@@ -9,8 +9,7 @@ import Doctors from "./pages/Doctors";
 import DoctorRegister from "./pages/DoctorRegister";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import ForDoctors from "./pages/ForDoctors";
-
-
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -45,7 +44,15 @@ function App() {
           path="/doctor-dashboard"
           element={<DoctorDashboard />}
         />
-        <Route path="/for-doctors" element={<ForDoctors />} />
+        <Route
+        path="/doctor-dashboard"
+        element={<DoctorDashboard />}
+      />
+
+      <Route
+        path="/admin-dashboard"
+        element={<AdminDashboard />}
+      />
     </Routes>
     
   );
