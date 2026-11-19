@@ -16,7 +16,7 @@ const createAdmin = async () => {
     console.log("MongoDB connected");
 
     const existingAdmin = await User.findOne({
-      email: "admin@myappointment.com",
+      email: process.env.ADMIN_EMAIL,
     });
 
     if (existingAdmin) {
@@ -24,11 +24,14 @@ const createAdmin = async () => {
       process.exit();
     }
 
-    const hashedPassword = await bcrypt.hash("Admin123!", 10);
+    const hashedPassword = await bcrypt.hash(
+      process.env.ADMIN_PASSWORD,
+      10
+    );
 
     await User.create({
       name: "MyAppointment Admin",
-      email: "admin@myappointment.com",
+      email: process.env.ADMIN_EMAIL,
       password: hashedPassword,
       role: "admin",
     });

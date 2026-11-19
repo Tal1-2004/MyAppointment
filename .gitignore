@@ -27,3 +27,17 @@ Thumbs.db
 
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+# Environment variables
+.env
+backend/.env
+frontend/.env
+
+# Dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Uploaded private documents
+backend/uploads/*
+!backend/uploads/.gitkeep
