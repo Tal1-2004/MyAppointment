@@ -256,7 +256,13 @@ function DoctorDashboard() {
             🏠 Dashboard
           </button>
 
-          <button>
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href =
+                "/doctor-appointments";
+            }}
+          >
             📅 Appointments
           </button>
 
@@ -452,9 +458,15 @@ function DoctorDashboard() {
               </p>
             </div>
 
-            <button type="button">
-              View All
-            </button>
+            <button
+                type="button"
+                onClick={() => {
+                  window.location.href =
+                    "/doctor-appointments";
+                }}
+              >
+                View All
+              </button>
 
           </div>
 

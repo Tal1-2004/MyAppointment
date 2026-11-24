@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import DoctorLogin from "./pages/DoctorLogin";
 import DoctorAvailability from "./pages/DoctorAvailability";
 import DoctorProfile from "./pages/DoctorProfile";
+import DoctorAppointments from "./pages/DoctorAppointments";
 
 function App() {
   return (
@@ -66,6 +67,10 @@ function App() {
       <Route
         path="/doctor-profile"
         element={<DoctorProfile />}
+      />
+      <Route
+        path="/doctor-appointments"
+        element={<DoctorAppointments />}
       />
     </Routes>
     
