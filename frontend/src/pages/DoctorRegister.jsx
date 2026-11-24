@@ -6,11 +6,12 @@ function DoctorRegister() {
     name: "",
     email: "",
     password: "",
-    specialty: "",
+    specialties: [],
     experience: "",
     location: "",
     bio: "",
   });
+
   const [files, setFiles] = useState({
     cv: null,
     diploma: null,
@@ -20,39 +21,162 @@ function DoctorRegister() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // =========================
+  // SPECIALTIES
+  // =========================
+
+  const specialtyOptions = [
+    "General Practitioner",
+    "Cardiologist",
+    "Dermatologist",
+    "Neurologist",
+    "Paediatrician",
+    "Psychiatrist",
+    "Gynaecologist",
+    "Ophthalmologist",
+    "Orthopaedic Surgeon",
+    "Otolaryngologist",
+    "Urologist",
+    "Endocrinologist",
+    "Gastroenterologist",
+    "Pulmonologist",
+    "Rheumatologist",
+  ];
+
+  // =========================
+  // FORM CHANGE
+  // =========================
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+
+    setFormData((current) => ({
+      ...current,
+      [name]: value,
+    }));
+
+    setMessage("");
+  };
+
+  // =========================
+  // SPECIALTY SELECT
+  // =========================
+
+  const handleSpecialtyToggle = (specialty) => {
+    setMessage("");
+
+    setFormData((current) => {
+      const selected =
+        current.specialties.includes(specialty);
+
+      if (selected) {
+        return {
+          ...current,
+          specialties: current.specialties.filter(
+            (item) => item !== specialty
+          ),
+        };
+      }
+
+      if (current.specialties.length >= 2) {
+        setMessage(
+          "You can select a maximum of two specialties."
+        );
+
+        return current;
+      }
+
+      return {
+        ...current,
+        specialties: [
+          ...current.specialties,
+          specialty,
+        ],
+      };
     });
   };
+
+  // =========================
+  // FILE CHANGE
+  // =========================
+
   const handleFileChange = (e) => {
-  setFiles({
-    ...files,
-    [e.target.name]: e.target.files[0],
-  });
+    setFiles((current) => ({
+      ...current,
+      [e.target.name]: e.target.files[0],
+    }));
   };
-    const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  setMessage("");
-  setLoading(true);
+  // =========================
+  // SUBMIT
+  // =========================
 
-  const doctorData = new FormData();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  doctorData.append("name", formData.name);
-  doctorData.append("email", formData.email);
-  doctorData.append("password", formData.password);
-  doctorData.append("specialty", formData.specialty);
-  doctorData.append("experience", formData.experience);
-  doctorData.append("location", formData.location);
-  doctorData.append("bio", formData.bio);
+    setMessage("");
 
-  doctorData.append("cv", files.cv);
-  doctorData.append("diploma", files.diploma);
-  doctorData.append("licence", files.licence);
+    if (formData.specialties.length === 0) {
+      setMessage(
+        "Please select at least one specialty."
+      );
+      return;
+    }
 
-  try {
+    if (formData.specialties.length > 2) {
+      setMessage(
+        "You can select a maximum of two specialties."
+      );
+      return;
+    }
+
+    if (!files.cv || !files.diploma || !files.licence) {
+      setMessage(
+        "Please upload all required professional documents."
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    const doctorData = new FormData();
+
+    doctorData.append("name", formData.name);
+    doctorData.append("email", formData.email);
+    doctorData.append(
+      "password",
+      formData.password
+    );
+
+    // Primary specialty
+    doctorData.append(
+      "specialty",
+      formData.specialties[0]
+    );
+
+    // Krejt specialties
+    doctorData.append(
+      "specialties",
+      JSON.stringify(formData.specialties)
+    );
+
+    doctorData.append(
+      "experience",
+      formData.experience
+    );
+
+    doctorData.append(
+      "location",
+      formData.location
+    );
+
+    doctorData.append("bio", formData.bio);
+
+    doctorData.append("cv", files.cv);
+    doctorData.append("diploma", files.diploma);
+    doctorData.append("licence", files.licence);
+
+    try {
       const response = await fetch(
         "http://localhost:5000/api/doctors/register",
         {
@@ -64,7 +188,10 @@ function DoctorRegister() {
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage(data.message || "Doctor registration failed.");
+        setMessage(
+          data.message ||
+            "Doctor registration failed."
+        );
         return;
       }
 
@@ -75,9 +202,11 @@ function DoctorRegister() {
       setTimeout(() => {
         window.location.href = "/login";
       }, 2500);
-
     } catch (error) {
-      console.error(error);
+      console.error(
+        "Doctor registration error:",
+        error
+      );
 
       setMessage(
         "Cannot connect to the server. Please try again."
@@ -85,24 +214,35 @@ function DoctorRegister() {
     } finally {
       setLoading(false);
     }
-};
-  
+  };
+
+  // =========================
+  // JSX
+  // =========================
 
   return (
     <main className="doctor-register-page">
       <div className="doctor-register-card">
 
+        {/* HEADER */}
+
         <div className="doctor-register-header">
-          <img src="/Designer.png" alt="MyAppointment logo" />
+          <img
+            src="/Designer.png"
+            alt="MyAppointment logo"
+          />
 
           <h1>Create Doctor Account</h1>
 
           <p>
-            Join MyAppointment and create your professional doctor profile.
+            Join MyAppointment and create your
+            professional doctor profile.
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
+
+          {/* NAME + EMAIL */}
 
           <div className="doctor-form-row">
             <div className="doctor-form-group">
@@ -119,28 +259,6 @@ function DoctorRegister() {
             </div>
 
             <div className="doctor-form-group">
-              <label>Specialty</label>
-
-              <select
-                name="specialty"
-                value={formData.specialty}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select specialty</option>
-                <option value="Cardiologist">Cardiologist</option>
-                <option value="Dermatologist">Dermatologist</option>
-                <option value="Dentist">Dentist</option>
-                <option value="Neurologist">Neurologist</option>
-                <option value="Orthopedic">Orthopedic</option>
-                <option value="Pediatrician">Pediatrician</option>
-                <option value="Ophthalmologist">Ophthalmologist</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="doctor-form-row">
-            <div className="doctor-form-group">
               <label>Email</label>
 
               <input
@@ -152,7 +270,56 @@ function DoctorRegister() {
                 required
               />
             </div>
+          </div>
 
+          {/* SPECIALTIES */}
+
+          <div className="doctor-form-group doctor-specialties-section">
+            <label>
+              Specialties
+
+              <span className="doctor-specialty-count">
+                {formData.specialties.length}/2 selected
+              </span>
+            </label>
+
+            <div className="doctor-register-specialties">
+              {specialtyOptions.map((specialty) => {
+                const selected =
+                  formData.specialties.includes(
+                    specialty
+                  );
+
+                return (
+                  <button
+                    key={specialty}
+                    type="button"
+                    className={
+                      selected
+                        ? "doctor-register-specialty specialty-active"
+                        : "doctor-register-specialty"
+                    }
+                    onClick={() =>
+                      handleSpecialtyToggle(
+                        specialty
+                      )
+                    }
+                  >
+                    {selected ? "✓ " : ""}
+                    {specialty}
+                  </button>
+                );
+              })}
+            </div>
+
+            <small>
+              Select one or two medical specialties.
+            </small>
+          </div>
+
+          {/* PASSWORD + EXPERIENCE */}
+
+          <div className="doctor-form-row">
             <div className="doctor-form-group">
               <label>Password</label>
 
@@ -165,9 +332,7 @@ function DoctorRegister() {
                 required
               />
             </div>
-          </div>
 
-          <div className="doctor-form-row">
             <div className="doctor-form-group">
               <label>Experience</label>
 
@@ -181,8 +346,11 @@ function DoctorRegister() {
                 required
               />
             </div>
+          </div>
 
-            <div className="doctor-form-group">
+          {/* CITY */}
+
+          <div className="doctor-form-group">
             <label>City</label>
 
             <select
@@ -191,17 +359,41 @@ function DoctorRegister() {
               onChange={handleChange}
               required
             >
-              <option value="">Select your city</option>
-              <option value="Prishtina">Prishtina</option>
-              <option value="Prizren">Prizren</option>
-              <option value="Peja">Peja</option>
-              <option value="Gjakova">Gjakova</option>
-              <option value="Ferizaj">Ferizaj</option>
-              <option value="Gjilan">Gjilan</option>
-              <option value="Mitrovica">Mitrovica</option>
+              <option value="">
+                Select your city
+              </option>
+
+              <option value="Prishtina">
+                Prishtina
+              </option>
+
+              <option value="Prizren">
+                Prizren
+              </option>
+
+              <option value="Peja">
+                Peja
+              </option>
+
+              <option value="Gjakova">
+                Gjakova
+              </option>
+
+              <option value="Ferizaj">
+                Ferizaj
+              </option>
+
+              <option value="Gjilan">
+                Gjilan
+              </option>
+
+              <option value="Mitrovica">
+                Mitrovica
+              </option>
             </select>
           </div>
-          </div>
+
+          {/* BIO */}
 
           <div className="doctor-form-group">
             <label>About You</label>
@@ -216,16 +408,22 @@ function DoctorRegister() {
             />
           </div>
 
+          {/* MESSAGE */}
+
           {message && (
             <p className="doctor-register-message">
               {message}
             </p>
           )}
+
+          {/* DOCUMENTS */}
+
           <div className="doctor-documents">
             <h3>Professional Documents</h3>
 
             <p className="documents-info">
-              Upload your professional documents for verification.
+              Upload your professional documents
+              for verification.
             </p>
 
             <div className="doctor-form-row">
@@ -242,7 +440,9 @@ function DoctorRegister() {
               </div>
 
               <div className="doctor-form-group">
-                <label>Diploma / Medical Degree</label>
+                <label>
+                  Diploma / Medical Degree
+                </label>
 
                 <input
                   type="file"
@@ -255,7 +455,9 @@ function DoctorRegister() {
             </div>
 
             <div className="doctor-form-group">
-              <label>Medical Licence / Certificate</label>
+              <label>
+                Medical Licence / Certificate
+              </label>
 
               <input
                 type="file"
@@ -267,15 +469,20 @@ function DoctorRegister() {
             </div>
           </div>
 
+          {/* SUBMIT */}
+
           <button
             type="submit"
             className="doctor-register-btn"
             disabled={loading}
           >
-            {loading ? "Submitting application..." : "Create Doctor Account"}
+            {loading
+              ? "Submitting application..."
+              : "Create Doctor Account"}
           </button>
-
         </form>
+
+        {/* FOOTER */}
 
         <div className="doctor-register-footer">
           <p>
@@ -283,9 +490,10 @@ function DoctorRegister() {
             <a href="/login">Log in</a>
           </p>
 
-          <a href="/">← Back to Home</a>
+          <a href="/">
+            ← Back to Home
+          </a>
         </div>
-
       </div>
     </main>
   );

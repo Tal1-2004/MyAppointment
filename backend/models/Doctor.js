@@ -10,10 +10,27 @@ const doctorSchema = new mongoose.Schema(
     },
 
     specialty: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+        type: String,
+        required: true,
+        trim: true,
+      },
+
+      specialties: {
+        type: [
+          {
+            type: String,
+            trim: true,
+          },
+        ],
+        default: [],
+        validate: {
+          validator: function (value) {
+            return value.length <= 2;
+          },
+          message:
+            "A doctor can have a maximum of two specialties",
+        },
+      },
 
     experience: {
       type: Number,

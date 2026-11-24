@@ -293,3 +293,54 @@
   font-weight: 600;
   cursor: pointer;
 }
+/* =========================
+   SPECIALTIES
+========================= */
+
+.doctor-specialty-count {
+  margin-left: 8px;
+  color: #2f8f72;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.doctor-register-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 8px;
+}
+
+.doctor-register-specialty {
+  border: 1px solid #d8e1de;
+  background: #ffffff;
+  color: #52605b;
+  padding: 9px 13px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.doctor-register-specialty:hover {
+  border-color: #71b39f;
+  background: #f3faf7;
+}
+
+.doctor-register-specialty.specialty-active {
+  background: #e8f6f1;
+  border-color: #2f8f72;
+  color: #26765f;
+}
+
+.doctor-register-specialty.specialty-active:hover {
+  background: #dff2eb;
+}
+
+.doctor-form-group small {
+  display: block;
+  margin-top: 8px;
+  color: #8a9692;
+  font-size: 12px;
+}

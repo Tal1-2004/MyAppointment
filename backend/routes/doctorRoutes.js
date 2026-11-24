@@ -4,6 +4,8 @@ const {
   registerDoctor,
   getApprovedDoctors,
   updateDoctorAvailability,
+  getDoctorProfile,
+  updateDoctorProfile,
 } = require("../controllers/doctorController");
 
 const upload = require("../middleware/uploadMiddleware");
@@ -36,6 +38,15 @@ router.post(
 router.put(
   "/availability",
   updateDoctorAvailability
+);
+router.get(
+  "/profile/:userId",
+  getDoctorProfile
+);
+
+router.put(
+  "/profile/:userId",
+  updateDoctorProfile
 );
 
 module.exports = router;

@@ -268,7 +268,11 @@ function DoctorDashboard() {
             🕒 Availability
           </button>
 
-          <button>
+          <button
+            onClick={() => {
+              window.location.href = "/doctor-profile";
+            }}
+          >
             👤 My Profile
           </button>
 
@@ -649,22 +653,22 @@ function DoctorDashboard() {
               </div>
             </button>
 
-            <button type="button">
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = "/doctor-profile";
+            }}
+          >
+            <span>👤</span>
 
-              <span>👤</span>
+            <div>
+              <strong>Edit Profile</strong>
 
-              <div>
-                <strong>
-                  Edit Profile
-                </strong>
-
-                <p>
-                  Update your professional
-                  information.
-                </p>
-              </div>
-
-            </button>
+              <p>
+                Update your professional information.
+              </p>
+            </div>
+          </button>
 
           </div>
 

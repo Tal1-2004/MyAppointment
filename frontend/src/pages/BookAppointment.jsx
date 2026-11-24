@@ -115,12 +115,21 @@ function BookAppointment() {
   // =========================
 
   const specialties = [
-    ...new Set(
-      availableDoctors.map(
-        (doctor) => doctor.specialty
-      )
-    ),
-  ];
+      ...new Set(
+        availableDoctors.flatMap((doctor) => {
+          if (
+            doctor.specialties &&
+            doctor.specialties.length > 0
+          ) {
+            return doctor.specialties;
+          }
+
+          return doctor.specialty
+            ? [doctor.specialty]
+            : [];
+        })
+      ),
+    ].sort();
 
   const locations = [
     "Prishtina",
@@ -133,9 +142,21 @@ function BookAppointment() {
   ];
 
   const filteredDoctors = availableDoctors.filter(
-    (doctor) =>
-      doctor.specialty === formData.specialty &&
-      doctor.location === formData.location
+    (doctor) => {
+      const doctorSpecialties =
+        doctor.specialties?.length > 0
+          ? doctor.specialties
+          : doctor.specialty
+          ? [doctor.specialty]
+          : [];
+
+      return (
+        doctorSpecialties.includes(
+          formData.specialty
+        ) &&
+        doctor.location === formData.location
+      );
+    }
   );
 
   const selectedDoctor = availableDoctors.find(

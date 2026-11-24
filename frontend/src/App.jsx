@@ -12,6 +12,7 @@ import ForDoctors from "./pages/ForDoctors";
 import AdminDashboard from "./pages/AdminDashboard";
 import DoctorLogin from "./pages/DoctorLogin";
 import DoctorAvailability from "./pages/DoctorAvailability";
+import DoctorProfile from "./pages/DoctorProfile";
 
 function App() {
   return (
@@ -46,11 +47,6 @@ function App() {
           path="/doctor-dashboard"
           element={<DoctorDashboard />}
         />
-        <Route
-        path="/doctor-dashboard"
-        element={<DoctorDashboard />}
-      />
-
       <Route
         path="/admin-dashboard"
         element={<AdminDashboard />}
@@ -66,6 +62,10 @@ function App() {
       <Route
       path="/doctor-availability"
       element={<DoctorAvailability />}
+      />
+      <Route
+        path="/doctor-profile"
+        element={<DoctorProfile />}
       />
     </Routes>
     
