@@ -6,17 +6,21 @@ function BookAppointment() {
   today.setHours(0, 0, 0, 0);
 
   const [formData, setFormData] = useState({
-  specialty: "",
-  location: "",
-  doctor: "",
-  doctorName: "",
-  date: "",
-  time: "",
-  reason: "",
-  }); 
+    specialty: "",
+    location: "",
+    doctor: "",
+    doctorName: "",
+    date: "",
+    time: "",
+    reason: "",
+  });
 
   const [availableDoctors, setAvailableDoctors] = useState([]);
   const [doctorsLoading, setDoctorsLoading] = useState(true);
+
+  const [bookedTimes, setBookedTimes] = useState([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,7 +51,10 @@ function BookAppointment() {
 
         setAvailableDoctors(data.doctors || []);
       } catch (error) {
-        console.error("Load doctors error:", error);
+        console.error(
+          "Load doctors error:",
+          error
+        );
 
         setMessage(
           "Cannot load doctors from the server."
@@ -60,7 +67,56 @@ function BookAppointment() {
     fetchDoctors();
   }, []);
 
-  // Specialties prej doktorëve realë
+  // =========================
+  // LOAD BOOKED TIMES
+  // =========================
+
+  useEffect(() => {
+    const fetchBookedSlots = async () => {
+      if (!formData.doctor || !formData.date) {
+        setBookedTimes([]);
+        return;
+      }
+
+      try {
+        setSlotsLoading(true);
+
+        const response = await fetch(
+          `http://localhost:5000/api/appointments/booked-slots?doctor=${formData.doctor}&date=${formData.date}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMessage(
+            data.message ||
+              "Could not load available times."
+          );
+          return;
+        }
+
+        setBookedTimes(data.bookedTimes || []);
+      } catch (error) {
+        console.error(
+          "Load booked slots error:",
+          error
+        );
+
+        setMessage(
+          "Cannot load available times from the server."
+        );
+      } finally {
+        setSlotsLoading(false);
+      }
+    };
+
+    fetchBookedSlots();
+  }, [formData.doctor, formData.date]);
+
+  // =========================
+  // DOCTORS / LOCATIONS
+  // =========================
+
   const specialties = [
     ...new Set(
       availableDoctors.map(
@@ -68,6 +124,7 @@ function BookAppointment() {
       )
     ),
   ];
+
   const locations = [
     "Prishtina",
     "Prizren",
@@ -78,13 +135,15 @@ function BookAppointment() {
     "Mitrovica",
   ];
 
-
-  // Doktorët e specialty së zgjedhur
   const filteredDoctors = availableDoctors.filter(
     (doctor) =>
       doctor.specialty === formData.specialty &&
       doctor.location === formData.location
   );
+
+  // =========================
+  // TIMES
+  // =========================
 
   const times = [
     "09:00",
@@ -95,64 +154,33 @@ function BookAppointment() {
     "15:00",
   ];
 
-  const getAvailableTimes = () => {
-  if (!formData.date) {
-    return [];
-  }
-
-  const now = new Date();
-
-  const todayDate = formatDate(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-  );
-
-  // Nëse është ditë tjetër në të ardhmen,
-  // krejt oraret janë në dispozicion.
-  if (formData.date !== todayDate) {
-    return times;
-  }
-
-    // Nëse është sot, largo orët që kanë kaluar.
-    const currentMinutes =
-      now.getHours() * 60 + now.getMinutes();
-
-    return times.filter((time) => {
-      const [hours, minutes] = time
-        .split(":")
-        .map(Number);
-
-      const appointmentMinutes =
-        hours * 60 + minutes;
-
-      return appointmentMinutes > currentMinutes;
-    });
-  };
-
   // =========================
   // FORM
   // =========================
 
   const handleChange = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  setFormData((current) => ({
-    ...current,
-    [name]: value,
+    setFormData((current) => ({
+      ...current,
+      [name]: value,
 
-    ...(name === "specialty" && {
-      location: "",
-      doctor: "",
-      doctorName: "",
-    }),
+      ...(name === "specialty" && {
+        location: "",
+        doctor: "",
+        doctorName: "",
+        date: "",
+        time: "",
+      }),
 
-    ...(name === "location" && {
-      doctor: "",
-      doctorName: "",
-    }),
-  }));
-};
+      ...(name === "location" && {
+        doctor: "",
+        doctorName: "",
+        date: "",
+        time: "",
+      }),
+    }));
+  };
 
   const handleDoctorChange = (e) => {
     const doctorId = e.target.value;
@@ -164,8 +192,13 @@ function BookAppointment() {
     setFormData((current) => ({
       ...current,
       doctor: doctorId,
-      doctorName: selectedDoctor?.user?.name || "",
+      doctorName:
+        selectedDoctor?.user?.name || "",
+      date: "",
+      time: "",
     }));
+
+    setBookedTimes([]);
   };
 
   // =========================
@@ -175,13 +208,11 @@ function BookAppointment() {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
-  const monthName = currentMonth.toLocaleString(
-    "en-US",
-    {
+  const monthName =
+    currentMonth.toLocaleString("en-US", {
       month: "long",
       year: "numeric",
-    }
-  );
+    });
 
   const daysInMonth = new Date(
     year,
@@ -190,15 +221,24 @@ function BookAppointment() {
   ).getDate();
 
   const firstDayOfMonth =
-    (new Date(year, month, 1).getDay() + 6) % 7;
+    (new Date(year, month, 1).getDay() + 6) %
+    7;
 
   const calendarDays = [];
 
-  for (let i = 0; i < firstDayOfMonth; i++) {
+  for (
+    let i = 0;
+    i < firstDayOfMonth;
+    i++
+  ) {
     calendarDays.push(null);
   }
 
-  for (let day = 1; day <= daysInMonth; day++) {
+  for (
+    let day = 1;
+    day <= daysInMonth;
+    day++
+  ) {
     calendarDays.push(day);
   }
 
@@ -217,8 +257,70 @@ function BookAppointment() {
 
     return `${yearValue}-${formattedMonth}-${formattedDay}`;
   };
-  
-  const availableTimes = getAvailableTimes();
+
+  // =========================
+  // AVAILABLE TIMES
+  // =========================
+
+  const getAvailableTimes = () => {
+    if (!formData.date) {
+      return [];
+    }
+
+    const now = new Date();
+
+    const todayDate = formatDate(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+
+    let validTimes = times;
+
+    // Nëse është sot, hiqi orët që kanë kaluar
+    if (formData.date === todayDate) {
+      const currentMinutes =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+      validTimes = times.filter((time) => {
+        const [hours, minutes] = time
+          .split(":")
+          .map(Number);
+
+        const appointmentMinutes =
+          hours * 60 + minutes;
+
+        return (
+          appointmentMinutes >
+          currentMinutes
+        );
+      });
+    }
+
+    // Hiqi edhe orët e rezervuara
+    return validTimes.filter(
+      (time) =>
+        !bookedTimes.includes(time)
+    );
+  };
+
+  const availableTimes =
+    getAvailableTimes();
+
+  const handleTimeSelect = (time) => {
+    if (
+      bookedTimes.includes(time) ||
+      !availableTimes.includes(time)
+    ) {
+      return;
+    }
+
+    setFormData((current) => ({
+      ...current,
+      time,
+    }));
+  };
 
   const selectDate = (day) => {
     if (!day) return;
@@ -247,6 +349,7 @@ function BookAppointment() {
       time: "",
     }));
 
+    setBookedTimes([]);
     setCalendarOpen(false);
   };
 
@@ -357,15 +460,19 @@ function BookAppointment() {
           method: "POST",
 
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
+
             Authorization: `Bearer ${token}`,
           },
 
           body: JSON.stringify({
             patient: user.id,
             doctor: formData.doctor,
-            doctorName: formData.doctorName,
-            specialty: formData.specialty,
+            doctorName:
+              formData.doctorName,
+            specialty:
+              formData.specialty,
             date: formData.date,
             time: formData.time,
             reason: formData.reason,
@@ -373,13 +480,45 @@ function BookAppointment() {
         }
       );
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
       if (!response.ok) {
         setMessage(
           data.message ||
             "Appointment booking failed."
         );
+
+        // Refresh booked slots if someone
+        // booked the same time before us.
+        if (response.status === 409) {
+          setFormData((current) => ({
+            ...current,
+            time: "",
+          }));
+
+          try {
+            const slotsResponse =
+              await fetch(
+                `http://localhost:5000/api/appointments/booked-slots?doctor=${formData.doctor}&date=${formData.date}`
+              );
+
+            const slotsData =
+              await slotsResponse.json();
+
+            if (slotsResponse.ok) {
+              setBookedTimes(
+                slotsData.bookedTimes || []
+              );
+            }
+          } catch (slotsError) {
+            console.error(
+              "Refresh booked slots error:",
+              slotsError
+            );
+          }
+        }
+
         return;
       }
 
@@ -428,8 +567,8 @@ function BookAppointment() {
           <h1>Book an Appointment</h1>
 
           <p>
-            Choose a doctor and a time that works
-            best for you.
+            Choose a doctor and a time that
+            works best for you.
           </p>
         </div>
 
@@ -445,9 +584,13 @@ function BookAppointment() {
 
             <select
               name="specialty"
-              value={formData.specialty}
+              value={
+                formData.specialty
+              }
               onChange={handleChange}
-              disabled={doctorsLoading}
+              disabled={
+                doctorsLoading
+              }
               required
             >
               <option value="">
@@ -456,27 +599,33 @@ function BookAppointment() {
                   : "Select specialty"}
               </option>
 
-              {specialties.map((specialty) => (
-                <option
-                  key={specialty}
-                  value={specialty}
-                >
-                  {specialty}
-                </option>
-              ))}
+              {specialties.map(
+                (specialty) => (
+                  <option
+                    key={specialty}
+                    value={specialty}
+                  >
+                    {specialty}
+                  </option>
+                )
+              )}
             </select>
           </div>
-              {/* Qyteti */}
+
+          {/* CITY */}
 
           <div className="booking-group">
-            
             <label>City</label>
 
             <select
               name="location"
-              value={formData.location}
+              value={
+                formData.location
+              }
               onChange={handleChange}
-              disabled={!formData.specialty}
+              disabled={
+                !formData.specialty
+              }
               required
             >
               <option value="">
@@ -485,14 +634,16 @@ function BookAppointment() {
                   : "Select city"}
               </option>
 
-              {locations.map((location) => (
-                <option
-                  key={location}
-                  value={location}
-                >
-                  {location}
-                </option>
-              ))}
+              {locations.map(
+                (location) => (
+                  <option
+                    key={location}
+                    value={location}
+                  >
+                    {location}
+                  </option>
+                )
+              )}
             </select>
           </div>
 
@@ -504,7 +655,9 @@ function BookAppointment() {
             <select
               name="doctor"
               value={formData.doctor}
-              onChange={handleDoctorChange}
+              onChange={
+                handleDoctorChange
+              }
               disabled={
                 !formData.specialty ||
                 !formData.location ||
@@ -520,14 +673,16 @@ function BookAppointment() {
                     : "Select doctor"}
               </option>
 
-              {filteredDoctors.map((doctor) => (
-                <option
-                  key={doctor._id}
-                  value={doctor._id}
-                >
-                  {doctor.user?.name}
-                </option>
-              ))}
+              {filteredDoctors.map(
+                (doctor) => (
+                  <option
+                    key={doctor._id}
+                    value={doctor._id}
+                  >
+                    {doctor.user?.name}
+                  </option>
+                )
+              )}
             </select>
           </div>
 
@@ -543,9 +698,13 @@ function BookAppointment() {
                   ? "has-date"
                   : ""
               }`}
+              disabled={
+                !formData.doctor
+              }
               onClick={() =>
                 setCalendarOpen(
-                  (current) => !current
+                  (current) =>
+                    !current
                 )
               }
             >
@@ -557,11 +716,15 @@ function BookAppointment() {
                       "en-GB",
                       {
                         day: "2-digit",
-                        month: "long",
-                        year: "numeric",
+                        month:
+                          "long",
+                        year:
+                          "numeric",
                       }
                     )
-                  : "Choose appointment date"}
+                  : formData.doctor
+                    ? "Choose appointment date"
+                    : "Choose a doctor first"}
               </span>
 
               <span className="calendar-icon">
@@ -579,22 +742,29 @@ function BookAppointment() {
                   <button
                     type="button"
                     className="calendar-arrow"
-                    onClick={previousMonth}
+                    onClick={
+                      previousMonth
+                    }
                     disabled={
-                      year === today.getFullYear() &&
-                      month === today.getMonth()
+                      year ===
+                        today.getFullYear() &&
+                      month ===
+                        today.getMonth()
                     }
                   >
-                    ‹
-                  </button>
+                    </button>
 
-                  <h3>{monthName}</h3>
+                  <h3>
+                    {monthName}
+                  </h3>
 
                   <button
                     type="button"
                     className="calendar-arrow"
-                    onClick={nextMonth}
-          >
+                    onClick={
+                      nextMonth
+                    }
+                  >
                     ›
                   </button>
 
@@ -627,7 +797,9 @@ function BookAppointment() {
                         isPastDate(day);
 
                       const selected =
-                        isSelectedDate(day);
+                        isSelectedDate(
+                          day
+                        );
 
                       const currentDay =
                         isToday(day);
@@ -638,7 +810,9 @@ function BookAppointment() {
                           key={day}
                           disabled={past}
                           onClick={() =>
-                            selectDate(day)
+                            selectDate(
+                              day
+                            )
                           }
                           className={[
                             "calendar-day",
@@ -655,7 +829,9 @@ function BookAppointment() {
                               ? "today"
                               : "",
                           ]
-                            .filter(Boolean)
+                            .filter(
+                              Boolean
+                            )
                             .join(" ")}
                         >
                           {day}
@@ -684,44 +860,118 @@ function BookAppointment() {
             )}
 
           </div>
+
           {/* TIME */}
 
           <div className="booking-group">
             <label>Time</label>
 
-            <select
-              name="time"
-              value={formData.time}
-              onChange={handleChange}
-              disabled={
-                !formData.date ||
-                availableTimes.length === 0
-              }
-              required
-            >
-              <option value="">
-                {!formData.date
-                  ? "Choose a date first"
-                  : availableTimes.length === 0
-                    ? "No available times today"
-                    : "Select time"}
-              </option>
+            {!formData.date ? (
+              <div className="time-slots-message">
+                Choose a date first
+              </div>
+            ) : slotsLoading ? (
+              <div className="time-slots-message">
+                Loading available
+                times...
+              </div>
+            ) : (
+              <>
+                <div className="time-slots">
 
-              {availableTimes.map((time) => (
-                <option
-                  key={time}
-                  value={time}
-                >
-                  {time}
-                </option>
-              ))}
-            </select>
+                  {times.map(
+                    (time) => {
+                      const isBooked =
+                        bookedTimes.includes(
+                          time
+                        );
+
+                      const isAvailable =
+                        availableTimes.includes(
+                          time
+                        );
+
+                      const isSelected =
+                        formData.time ===
+                        time;
+
+                      const isDisabled =
+                        isBooked ||
+                        !isAvailable;
+
+                      return (
+                        <button
+                          key={time}
+                          type="button"
+                          disabled={
+                            isDisabled
+                          }
+                          onClick={() =>
+                            handleTimeSelect(
+                              time
+                            )
+                          }
+                          className={[
+                            "time-slot",
+
+                            isSelected
+                              ? "time-slot-selected"
+                              : "",
+
+                            isBooked
+                              ? "time-slot-booked"
+                              : "",
+
+                            !isBooked &&
+                            !isAvailable
+                              ? "time-slot-passed"
+                              : "",
+                          ]
+                            .filter(
+                              Boolean
+                            )
+                            .join(" ")}
+                        >
+                          <span>
+                            {time}
+                          </span>
+
+                          {isBooked && (
+                            <small>
+                              Booked
+                            </small>
+                          )}
+
+                          {!isBooked &&
+                            !isAvailable && (
+                              <small>
+                                Passed
+                              </small>
+                            )}
+                        </button>
+                      );
+                    }
+                  )}
+
+                </div>
+
+                {availableTimes.length ===
+                  0 && (
+                  <p className="no-time-slots">
+                    No available times
+                    for this date.
+                  </p>
+                )}
+              </>
+            )}
           </div>
 
           {/* REASON */}
 
           <div className="booking-group">
-            <label>Reason for visit</label>
+            <label>
+              Reason for visit
+            </label>
 
             <textarea
               name="reason"
@@ -748,7 +998,8 @@ function BookAppointment() {
             className="booking-submit"
             disabled={
               isSubmitting ||
-              doctorsLoading
+              doctorsLoading ||
+              slotsLoading
             }
           >
             {isSubmitting

@@ -540,3 +540,91 @@
   cursor: not-allowed;
   transform: none;
 }
+
+/* TIME SLOTS */
+
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.time-slot {
+  min-height: 58px;
+  padding: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+
+  color: #15966b;
+  background: #ffffff;
+
+  border: 1px solid #b7e8d5;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.time-slot:hover:not(:disabled) {
+  color: #ffffff;
+  background: #18a875;
+  border-color: #18a875;
+
+  transform: translateY(-2px);
+}
+
+.time-slot-selected {
+  color: #ffffff;
+  background: #18a875;
+  border-color: #18a875;
+
+  box-shadow: 0 5px 14px rgba(24, 168, 117, 0.2);
+}
+
+.time-slot-booked,
+.time-slot-passed {
+  color: #94a3b8;
+  background: #f1f5f3;
+  border-color: #dce5e1;
+
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.time-slot small {
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.time-slots-message,
+.no-time-slots {
+  padding: 14px;
+
+  color: #64748b;
+  background: #f8fcfa;
+
+  border: 1px dashed #cde5db;
+  border-radius: 9px;
+
+  text-align: center;
+  font-size: 13px;
+}
+
+.no-time-slots {
+  margin: 12px 0 0;
+}
+
+@media (max-width: 600px) {
+  .time-slots {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

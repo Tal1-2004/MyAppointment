@@ -6,6 +6,10 @@ const {
   sendAppointmentConfirmation,
 } = require("../services/emailService");
 
+// ==============================
+// CREATE APPOINTMENT
+// ==============================
+
 const createAppointment = async (req, res) => {
   try {
     const {
@@ -18,7 +22,6 @@ const createAppointment = async (req, res) => {
       reason,
     } = req.body;
 
-    // Kontrollo fushat e nevojshme
     if (
       !patient ||
       !doctor ||
@@ -28,11 +31,11 @@ const createAppointment = async (req, res) => {
       !time
     ) {
       return res.status(400).json({
-        message: "Please complete all required appointment fields.",
+        message:
+          "Please complete all required appointment fields.",
       });
     }
 
-    // Kontrollo pacientin
     const user = await User.findById(patient);
 
     if (!user) {
@@ -41,8 +44,9 @@ const createAppointment = async (req, res) => {
       });
     }
 
-    // Kontrollo doktorin
-    const doctorProfile = await Doctor.findById(doctor);
+    const doctorProfile = await Doctor.findById(
+      doctor
+    );
 
     if (!doctorProfile) {
       return res.status(404).json({
@@ -50,25 +54,47 @@ const createAppointment = async (req, res) => {
       });
     }
 
-    // Lejo booking vetëm me doktor të aprovuar
-    if (doctorProfile.verificationStatus !== "approved") {
+    if (
+      doctorProfile.verificationStatus !==
+      "approved"
+    ) {
       return res.status(400).json({
-        message: "This doctor is not available for booking.",
+        message:
+          "This doctor is not available for booking.",
       });
     }
 
-    // Krijo appointment
-    const appointment = await Appointment.create({
-      patient,
-      doctor,
-      doctorName,
-      specialty,
-      date,
-      time,
-      reason,
-    });
+    const appointmentDate = new Date(date);
 
-    // Dërgo confirmation email
+    // Kontrollo a është termini i zënë
+    const existingAppointment =
+      await Appointment.findOne({
+        doctor,
+        date: appointmentDate,
+        time,
+        status: {
+          $ne: "cancelled",
+        },
+      });
+
+    if (existingAppointment) {
+      return res.status(409).json({
+        message:
+          "This time slot is already booked.",
+      });
+    }
+
+    const appointment =
+      await Appointment.create({
+        patient,
+        doctor,
+        doctorName,
+        specialty,
+        date: appointmentDate,
+        time,
+        reason,
+      });
+
     try {
       await sendAppointmentConfirmation({
         email: user.email,
@@ -87,7 +113,8 @@ const createAppointment = async (req, res) => {
     }
 
     return res.status(201).json({
-      message: "Appointment booked successfully",
+      message:
+        "Appointment booked successfully",
       appointment,
     });
   } catch (error) {
@@ -96,20 +123,36 @@ const createAppointment = async (req, res) => {
       error
     );
 
+    // MongoDB duplicate doctor + date + time
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message:
+          "This time slot is already booked.",
+      });
+    }
+
     return res.status(500).json({
       message: "Server error",
       error: error.message,
     });
   }
 };
-const getDoctorAppointments = async (req, res) => {
+
+// ==============================
+// GET DOCTOR APPOINTMENTS
+// ==============================
+
+const getDoctorAppointments = async (
+  req,
+  res
+) => {
   try {
     const { userId } = req.params;
 
-    // Gjeje profilin Doctor për user-in që është login
-    const doctorProfile = await Doctor.findOne({
-      user: userId,
-    });
+    const doctorProfile =
+      await Doctor.findOne({
+        user: userId,
+      });
 
     if (!doctorProfile) {
       return res.status(404).json({
@@ -117,15 +160,15 @@ const getDoctorAppointments = async (req, res) => {
       });
     }
 
-    // Merr vetëm appointment-et e këtij doktori
-    const appointments = await Appointment.find({
-      doctor: doctorProfile._id,
-    })
-      .populate("patient", "name email")
-      .sort({
-        date: 1,
-        time: 1,
-      });
+    const appointments =
+      await Appointment.find({
+        doctor: doctorProfile._id,
+      })
+        .populate("patient", "name email")
+        .sort({
+          date: 1,
+          time: 1,
+        });
 
     return res.status(200).json({
       doctor: {
@@ -147,13 +190,23 @@ const getDoctorAppointments = async (req, res) => {
     });
   }
 };
-const updateAppointmentStatus = async (req, res) => {
+
+// ==============================
+// UPDATE APPOINTMENT STATUS
+// ==============================
+
+const updateAppointmentStatus = async (
+  req,
+  res
+) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
 
-    // Vetëm këto statuse mund t'i vendos doktori
-    const allowedStatuses = ["completed", "delayed"];
+    const allowedStatuses = [
+      "completed",
+      "delayed",
+    ];
 
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
@@ -161,10 +214,10 @@ const updateAppointmentStatus = async (req, res) => {
       });
     }
 
-    // Gjeje profilin e doktorit që është login
-    const doctorProfile = await Doctor.findOne({
-      user: req.user._id,
-    });
+    const doctorProfile =
+      await Doctor.findOne({
+        user: req.user._id,
+      });
 
     if (!doctorProfile) {
       return res.status(404).json({
@@ -172,8 +225,8 @@ const updateAppointmentStatus = async (req, res) => {
       });
     }
 
-    // Gjeje appointment-in
-    const appointment = await Appointment.findById(id);
+    const appointment =
+      await Appointment.findById(id);
 
     if (!appointment) {
       return res.status(404).json({
@@ -181,19 +234,20 @@ const updateAppointmentStatus = async (req, res) => {
       });
     }
 
-    // Sigurohu që appointment-i i takon këtij doktori
     if (
       appointment.doctor.toString() !==
       doctorProfile._id.toString()
     ) {
       return res.status(403).json({
-        message: "You cannot manage this appointment",
+        message:
+          "You cannot manage this appointment",
       });
     }
 
     if (appointment.status === "cancelled") {
       return res.status(400).json({
-        message: "Cancelled appointments cannot be updated",
+        message:
+          "Cancelled appointments cannot be updated",
       });
     }
 
@@ -218,9 +272,54 @@ const updateAppointmentStatus = async (req, res) => {
   }
 };
 
+  const getBookedSlots = async (req, res) => {
+    try {
+      const { doctor, date } = req.query;
+
+      if (!doctor || !date) {
+        return res.status(400).json({
+          message: "Doctor and date are required.",
+        });
+      }
+
+      const appointmentDate = new Date(date);
+
+      const appointments = await Appointment.find({
+        doctor,
+        date: appointmentDate,
+        status: {
+          $ne: "cancelled",
+        },
+      }).select("time");
+
+      const bookedTimes = appointments.map(
+        (appointment) => appointment.time
+      );
+
+      return res.status(200).json({
+        bookedTimes,
+      });
+    } catch (error) {
+      console.error(
+        "Get booked slots error:",
+        error
+      );
+
+      return res.status(500).json({
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  };
+
+
+// ==============================
+// EXPORTS
+// ==============================
 
 module.exports = {
   createAppointment,
   getDoctorAppointments,
   updateAppointmentStatus,
+  getBookedSlots,
 };

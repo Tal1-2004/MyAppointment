@@ -5,6 +5,7 @@ const {
   createAppointment,
   getDoctorAppointments,
   updateAppointmentStatus,
+  getBookedSlots,
 } = require("../controllers/appointmentController");
 
 const {
@@ -23,6 +24,8 @@ router.patch(
   protect,
   updateAppointmentStatus
 );
+
+router.get("/booked-slots", getBookedSlots);
 
 
 module.exports = router;
