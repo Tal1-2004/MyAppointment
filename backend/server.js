@@ -12,6 +12,8 @@ dotenv.config();
 const authRoutes = require("./routes/authRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
+const notificationRoutes =
+  require("./routes/notificationRoutes");
 
 const app = express();
 
@@ -23,6 +25,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/admin", adminRoutes);
+app.use(
+  "/api/notifications",
+  notificationRoutes
+);
 
 app.get("/", (req, res) => {
   res.send("API Working");

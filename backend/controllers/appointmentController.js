@@ -1,6 +1,7 @@
 const Appointment = require("../models/Appointment");
 const User = require("../models/User");
 const Doctor = require("../models/Doctor");
+const Notification = require("../models/Notification");
 
 const {
   sendAppointmentConfirmation,
@@ -35,7 +36,7 @@ const createAppointment = async (req, res) => {
           "Please complete all required appointment fields.",
       });
     }
-
+  
     const user = await User.findById(patient);
 
     if (!user) {
@@ -94,6 +95,23 @@ const createAppointment = async (req, res) => {
         time,
         reason,
       });
+
+      try {
+        await Notification.create({
+          doctor: doctorProfile._id,
+          appointment: appointment._id,
+          type: "new_appointment",
+          title: "New appointment",
+          message: `${user.name} booked an appointment for ${date} at ${time}.`,
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error(
+          "Create notification error:",
+          notificationError.message
+        );
+      }
+      
 
     try {
       await sendAppointmentConfirmation({
