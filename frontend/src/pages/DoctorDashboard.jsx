@@ -751,23 +751,28 @@ function DoctorDashboard() {
 
             {/* USER */}
 
-            <div className="doctor-dashboard-user">
+            <button
+              type="button"
+              className="doctor-dashboard-user"
+              onClick={() => {
+                window.location.href = "/doctor-profile";
+              }}
+              title="View profile"
+            >
               <div className="dashboard-avatar">
                 {user?.name
                   ?.charAt(0)
-                  .toUpperCase() ||
-                  "D"}
+                  .toUpperCase() || "D"}
               </div>
 
               <div>
                 <strong>
-                  {user?.name ||
-                    "Doctor"}
+                  {user?.name || "Doctor"}
                 </strong>
 
                 <span>Doctor</span>
               </div>
-            </div>
+            </button>
           </div>
         </header>
 

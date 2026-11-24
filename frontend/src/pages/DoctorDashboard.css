@@ -196,7 +196,19 @@
 
   border: 1px solid #e2ece8;
   border-radius: 12px;
+
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: 0.2s ease;
 }
+
+.doctor-dashboard-user:hover {
+  background: #effbf6;
+  border-color: #18a875;
+  transform: translateY(-1px);
+}
+
 
 .dashboard-avatar {
   width: 40px;

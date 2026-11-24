@@ -6,6 +6,7 @@ function DoctorRegister() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     specialties: [],
     experience: "",
     location: "",
@@ -20,6 +21,12 @@ function DoctorRegister() {
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] =
+  useState(false);
+
+  const [showConfirmPassword, setShowConfirmPassword] =
+  useState(false);
 
   // =========================
   // SPECIALTIES
@@ -115,6 +122,23 @@ function DoctorRegister() {
     e.preventDefault();
 
     setMessage("");
+
+    if (formData.password.length < 6) {
+  setMessage(
+    "Password must be at least 6 characters."
+    );
+    return;
+  }
+
+  if (
+    formData.password !==
+    formData.confirmPassword
+  ) {
+    setMessage(
+      "Passwords do not match."
+    );
+    return;
+  }
 
     if (formData.specialties.length === 0) {
       setMessage(
@@ -317,81 +341,192 @@ function DoctorRegister() {
             </small>
           </div>
 
-          {/* PASSWORD + EXPERIENCE */}
+          {/* PASSWORD + CONFIRM PASSWORD */}
 
-          <div className="doctor-form-row">
-            <div className="doctor-form-group">
-              <label>Password</label>
+<div className="doctor-form-row">
+  <div className="doctor-form-group">
+    <label>Password</label>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Create a password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
+    <div className="doctor-password-wrapper">
+      <input
+        type={
+          showPassword
+            ? "text"
+            : "password"
+        }
+        name="password"
+        placeholder="Create a password"
+        value={formData.password}
+        onChange={handleChange}
+        required
+      />
 
-            <div className="doctor-form-group">
-              <label>Experience</label>
-
-              <input
-                type="number"
-                name="experience"
-                placeholder="Years of experience"
-                min="0"
-                value={formData.experience}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          {/* CITY */}
-
-          <div className="doctor-form-group">
-            <label>City</label>
-
-            <select
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
+      <button
+        type="button"
+        className="doctor-password-eye"
+        onClick={() =>
+          setShowPassword(
+            (current) => !current
+          )
+        }
+        aria-label={
+          showPassword
+            ? "Hide password"
+            : "Show password"
+        }
+      >
+        {showPassword ? (
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
             >
-              <option value="">
-                Select your city
-              </option>
+              <path d="M3 3l18 18" />
+              <path d="M10.6 10.6a2 2 0 002.8 2.8" />
+              <path d="M9.9 4.2A10.8 10.8 0 0112 4c5.5 0 9 5 9 5a15.6 15.6 0 01-2.1 2.7" />
+              <path d="M6.6 6.6C4.3 8 3 10 3 10s3.5 5 9 5a10 10 0 004-.8" />
+            </svg>
+          ) : (
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            >
+              <path d="M3 12s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5z" />
+              <circle cx="12" cy="12" r="2.2" />
+            </svg>
+          )}
+      </button>
+    </div>
+  </div>
 
-              <option value="Prishtina">
-                Prishtina
-              </option>
+  <div className="doctor-form-group">
+    <label>Confirm Password</label>
 
-              <option value="Prizren">
-                Prizren
-              </option>
+    <div className="doctor-password-wrapper">
+      <input
+        type={
+          showConfirmPassword
+            ? "text"
+            : "password"
+        }
+        name="confirmPassword"
+        placeholder="Confirm your password"
+        value={formData.confirmPassword}
+        onChange={handleChange}
+        required
+      />
 
-              <option value="Peja">
-                Peja
-              </option>
+      <button
+        type="button"
+        className="doctor-password-eye"
+        onClick={() =>
+          setShowConfirmPassword(
+            (current) => !current
+          )
+        }
+        aria-label={
+          showConfirmPassword
+            ? "Hide password"
+            : "Show password"
+        }
+      >
+        {showConfirmPassword ? (
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              >
+                <path d="M3 3l18 18" />
+                <path d="M10.6 10.6a2 2 0 002.8 2.8" />
+                <path d="M9.9 4.2A10.8 10.8 0 0112 4c5.5 0 9 5 9 5a15.6 15.6 0 01-2.1 2.7" />
+                <path d="M6.6 6.6C4.3 8 3 10 3 10s3.5 5 9 5a10 10 0 004-.8" />
+              </svg>
+            ) : (
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              >
+                <path d="M3 12s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5z" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="2.2"
+                />
+              </svg>
+            )}
+      </button>
+    </div>
+  </div>
+</div>
 
-              <option value="Gjakova">
-                Gjakova
-              </option>
+    {/* EXPERIENCE + CITY */}
 
-              <option value="Ferizaj">
-                Ferizaj
-              </option>
+    <div className="doctor-form-row">
+      <div className="doctor-form-group">
+        <label>Experience</label>
 
-              <option value="Gjilan">
-                Gjilan
-              </option>
+        <input
+          type="number"
+          name="experience"
+          placeholder="Years of experience"
+          min="0"
+          value={formData.experience}
+          onChange={handleChange}
+          required
+        />
+      </div>
 
-              <option value="Mitrovica">
-                Mitrovica
-              </option>
-            </select>
-          </div>
+      <div className="doctor-form-group">
+        <label>City</label>
+
+        <select
+          name="location"
+          value={formData.location}
+          onChange={handleChange}
+          required
+        >
+          <option value="">
+            Select your city
+          </option>
+
+          <option value="Prishtina">
+            Prishtina
+          </option>
+          <option value="Prizren">
+            Prizren
+          </option>
+          <option value="Peja">
+            Peja
+          </option>
+          <option value="Gjakova">
+            Gjakova
+          </option>
+          <option value="Ferizaj">
+            Ferizaj
+          </option>
+          <option value="Gjilan">
+            Gjilan
+          </option>
+          <option value="Mitrovica">
+            Mitrovica
+          </option>
+        </select>
+      </div>
+    </div>
 
           {/* BIO */}
 

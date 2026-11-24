@@ -344,3 +344,89 @@
   color: #8a9692;
   font-size: 12px;
 }
+
+/* =========================
+   PASSWORD SHOW / HIDE
+========================= */
+
+.doctor-password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.doctor-password-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 50px;
+}
+
+.doctor-password-eye {
+  position: absolute;
+
+  top: 50%;
+  right: 12px;
+
+  transform: translateY(-50%);
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  background: transparent;
+  color: #64748b;
+
+  border: none;
+
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  z-index: 5;
+}
+
+.doctor-password-eye:hover {
+  color: #18a875;
+  background: #effbf6;
+  border-radius: 7px;
+}
+.doctor-password-eye {
+  position: absolute;
+  top: 50%;
+  right: 13px;
+
+  transform: translateY(-50%);
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  color: #7b8b86;
+  background: transparent;
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.doctor-password-eye:hover {
+  color: #18a875;
+  background: #effbf6;
+}
+
+.doctor-password-eye svg {
+  display: block;
+}
