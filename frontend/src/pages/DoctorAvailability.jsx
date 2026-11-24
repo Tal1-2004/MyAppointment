@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./DoctorAvailability.css";
+
 
 function DoctorAvailability() {
   const user = JSON.parse(
@@ -29,8 +30,103 @@ function DoctorAvailability() {
 
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [appointmentDuration, setAppointmentDuration] =
   useState(30);
+
+
+    // =========================
+  // LOAD SAVED AVAILABILITY
+  // =========================
+
+  useEffect(() => {
+    const fetchDoctorAvailability = async () => {
+      if (!user?.id) {
+        window.location.href = "/login";
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        const response = await fetch(
+          "http://localhost:5000/api/doctors"
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMessage(
+            data.message ||
+              "Could not load saved availability."
+          );
+          return;
+        }
+
+        const doctors = data.doctors || [];
+
+        const currentDoctor = doctors.find((doctor) => {
+          const doctorUserId =
+            doctor.user?._id || doctor.user;
+
+          return String(doctorUserId) === String(user.id);
+        });
+
+        if (!currentDoctor) {
+          setMessage("Doctor profile was not found.");
+          return;
+        }
+
+        if (currentDoctor.availability) {
+          const loadedAvailability = {};
+
+          days.forEach((day) => {
+            const savedDay =
+              currentDoctor.availability[day];
+
+            loadedAvailability[day] = {
+              enabled: savedDay?.enabled || false,
+
+              periods:
+                savedDay?.periods?.length > 0
+                  ? savedDay.periods.map((period) => ({
+                      startTime:
+                        period.startTime || "",
+                      endTime:
+                        period.endTime || "",
+                    }))
+                  : [
+                      {
+                        startTime: "",
+                        endTime: "",
+                      },
+                    ],
+            };
+          });
+
+          setAvailability(loadedAvailability);
+        }
+
+        setAppointmentDuration(
+          Number(currentDoctor.appointmentDuration) ||
+            30
+        );
+      } catch (error) {
+        console.error(
+          "Load availability error:",
+          error
+        );
+
+        setMessage(
+          "Cannot load saved availability from the server."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctorAvailability();
+  }, [user?.id]);
 
   const days = [
     "monday",
@@ -318,7 +414,7 @@ function DoctorAvailability() {
       return "";
     };
 
-  // =========================
+    // =========================
   // SAVE AVAILABILITY
   // =========================
 
@@ -365,17 +461,21 @@ function DoctorAvailability() {
           data.message ||
             "Could not save availability."
         );
-
         return;
       }
 
-      setAvailability(
-        data.availability || availability
-      );
+      if (data.availability) {
+        setAvailability(data.availability);
+      }
 
-      setMessage(
-        "Availability saved successfully."
-      );
+      if (data.appointmentDuration) {
+        setAppointmentDuration(
+          Number(data.appointmentDuration)
+        );
+      }
+
+      // Pas ruajtjes dërgoje doktorin te profili
+      window.location.href = "/doctor-dashboard";
     } catch (error) {
       console.error(
         "Save availability error:",
@@ -678,11 +778,13 @@ function DoctorAvailability() {
           type="button"
           className="availability-save"
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || loading}
         >
-          {saving
+          {loading
+            ? "Loading availability..."
+            : saving
             ? "Saving..."
-            : "Save Availability"}
+            : "Update Availability"}
         </button>
 
       </div>
