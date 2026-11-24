@@ -49,6 +49,10 @@ const doctorSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    profileImage: {
+      type: String,
+      default: "",
+    },
 
     appointmentDuration: {
       type: Number,

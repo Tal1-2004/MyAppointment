@@ -21,6 +21,25 @@ function DoctorProfile() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
+  // Fotoja e konfirmuar që do të ruhet në backend
+  const [profileImage, setProfileImage] =
+    useState(null);
+
+  // Fotoja që shfaqet në profil
+  const [imagePreview, setImagePreview] =
+    useState("");
+
+  // Modal-i i fotografisë
+  const [photoModalOpen, setPhotoModalOpen] =
+    useState(false);
+
+  // Fotoja e zgjedhur brenda modal-it
+  const [temporaryImage, setTemporaryImage] =
+    useState(null);
+
+  const [temporaryPreview, setTemporaryPreview] =
+    useState("");
+
   const locations = [
     "Prishtina",
     "Prizren",
@@ -30,6 +49,7 @@ function DoctorProfile() {
     "Gjilan",
     "Mitrovica",
   ];
+
   const specialtyOptions = [
     "General Practitioner",
     "Cardiologist",
@@ -47,6 +67,26 @@ function DoctorProfile() {
     "Pulmonologist",
     "Rheumatologist",
   ];
+
+  // =========================
+  // PROFILE IMAGE URL
+  // =========================
+
+  const getProfileImageUrl = (imagePath) => {
+    if (!imagePath) {
+      return "";
+    }
+
+    if (imagePath.startsWith("http")) {
+      return imagePath;
+    }
+
+    const cleanPath = imagePath
+      .replaceAll("\\", "/")
+      .replace(/^\/+/, "");
+
+    return `http://localhost:5000/${cleanPath}`;
+  };
 
   // =========================
   // LOAD PROFILE
@@ -77,6 +117,13 @@ function DoctorProfile() {
         }
 
         setDoctor(data.doctor);
+        setProfileImage(null);
+
+        setImagePreview(
+          getProfileImageUrl(
+            data.doctor.profileImage
+          )
+        );
 
         const savedSpecialties =
           data.doctor.specialties?.length > 0
@@ -87,8 +134,10 @@ function DoctorProfile() {
 
         setFormData({
           specialties: savedSpecialties,
-          experience: data.doctor.experience ?? "",
-          location: data.doctor.location || "",
+          experience:
+            data.doctor.experience ?? "",
+          location:
+            data.doctor.location || "",
           bio: data.doctor.bio || "",
         });
       } catch (error) {
@@ -123,7 +172,11 @@ function DoctorProfile() {
     setMessage("");
   };
 
-    const handleSpecialtyToggle = (specialty) => {
+  // =========================
+  // SPECIALTIES
+  // =========================
+
+  const handleSpecialtyToggle = (specialty) => {
     setMessage("");
 
     setFormData((current) => {
@@ -133,9 +186,10 @@ function DoctorProfile() {
       if (isSelected) {
         return {
           ...current,
-          specialties: current.specialties.filter(
-            (item) => item !== specialty
-          ),
+          specialties:
+            current.specialties.filter(
+              (item) => item !== specialty
+            ),
         };
       }
 
@@ -158,11 +212,84 @@ function DoctorProfile() {
   };
 
   // =========================
+  // PHOTO MODAL
+  // =========================
+
+  const openPhotoModal = () => {
+    setTemporaryImage(null);
+    setTemporaryPreview(imagePreview);
+    setPhotoModalOpen(true);
+    setMessage("");
+  };
+
+  const closePhotoModal = () => {
+    setTemporaryImage(null);
+    setTemporaryPreview("");
+    setPhotoModalOpen(false);
+  };
+
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      setMessage(
+        "Please select a JPG or PNG image."
+      );
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage(
+        "Profile image must be smaller than 5 MB."
+      );
+      return;
+    }
+
+    setTemporaryImage(file);
+
+    setTemporaryPreview(
+      URL.createObjectURL(file)
+    );
+
+    setMessage("");
+  };
+
+  const confirmPhoto = () => {
+    if (!temporaryImage) {
+      setMessage(
+        "Please choose an image first."
+      );
+      return;
+    }
+
+    // Fotoja shfaqet në profil,
+    // por ruhet në backend vetëm me Save Changes
+    setProfileImage(temporaryImage);
+    setImagePreview(temporaryPreview);
+
+    setTemporaryImage(null);
+    setTemporaryPreview("");
+    setPhotoModalOpen(false);
+    setMessage("");
+  };
+
+  // =========================
   // CANCEL EDIT
   // =========================
 
   const handleCancel = () => {
-    if (!doctor) return;
+    if (!doctor) {
+      return;
+    }
 
     setFormData({
       specialties:
@@ -171,10 +298,28 @@ function DoctorProfile() {
           : doctor.specialty
           ? [doctor.specialty]
           : [],
-      experience: doctor.experience ?? "",
-      location: doctor.location || "",
-      bio: doctor.bio || "",
+
+      experience:
+        doctor.experience ?? "",
+
+      location:
+        doctor.location || "",
+
+      bio:
+        doctor.bio || "",
     });
+
+    setProfileImage(null);
+
+    setImagePreview(
+      getProfileImageUrl(
+        doctor.profileImage
+      )
+    );
+
+    setPhotoModalOpen(false);
+    setTemporaryImage(null);
+    setTemporaryPreview("");
 
     setEditing(false);
     setMessage("");
@@ -185,105 +330,157 @@ function DoctorProfile() {
   // =========================
 
   const handleSave = async () => {
-    if (
-        formData.specialties.length === 0 ||
-        formData.experience === "" ||
-        !formData.location.trim() ||
-        !formData.bio.trim()
-      ){
-      setMessage(
-        "Please complete all profile fields."
-      );
-      return;
-    }
-    
-    if (formData.specialties.length > 2) {
-      setMessage(
-        "You can select a maximum of two specialties."
-      );
-      return;
-    }
+  if (
+    formData.specialties.length === 0 ||
+    formData.experience === "" ||
+    !formData.location.trim() ||
+    !formData.bio.trim()
+  ) {
+    setMessage(
+      "Please complete all profile fields."
+    );
+    return;
+  }
 
-    const experience = Number(
-      formData.experience
+  if (formData.specialties.length > 2) {
+    setMessage(
+      "You can select a maximum of two specialties."
+    );
+    return;
+  }
+
+  const experience = Number(formData.experience);
+
+  if (
+    Number.isNaN(experience) ||
+    experience < 0
+  ) {
+    setMessage(
+      "Experience must be a valid number."
+    );
+    return;
+  }
+
+  // =========================
+  // PREPARE DATA
+  // =========================
+
+  const profileData = new FormData();
+
+  profileData.append(
+    "specialty",
+    formData.specialties[0]
+  );
+
+  profileData.append(
+    "specialties",
+    JSON.stringify(formData.specialties)
+  );
+
+  profileData.append(
+    "experience",
+    experience
+  );
+
+  profileData.append(
+    "location",
+    formData.location.trim()
+  );
+
+  profileData.append(
+    "bio",
+    formData.bio.trim()
+  );
+
+  // Nëse është zgjedhur foto e re
+  if (profileImage) {
+    profileData.append(
+      "profileImage",
+      profileImage
+    );
+  }
+
+  // =========================
+  // SAVE PROFILE
+  // =========================
+
+  try {
+    setSaving(true);
+    setMessage("");
+
+    const response = await fetch(
+      `http://localhost:5000/api/doctors/profile/${user.id}`,
+      {
+        method: "PUT",
+        body: profileData,
+      }
     );
 
-    if (
-      Number.isNaN(experience) ||
-      experience < 0
-    ) {
+    const data = await response.json();
+
+    if (!response.ok) {
       setMessage(
-        "Experience must be a valid number."
+        data.message ||
+          "Could not update profile."
       );
       return;
     }
 
-    try {
-      setSaving(true);
-      setMessage("");
+    // Profili i ri prej backend-it
+    setDoctor(data.doctor);
 
-      const response = await fetch(
-        `http://localhost:5000/api/doctors/profile/${user.id}`,
-        {
-          method: "PUT",
+    // Fotoja tash është ruajtur
+    setProfileImage(null);
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+    setImagePreview(
+      getProfileImageUrl(
+        data.doctor.profileImage
+      )
+    );
 
-          body: JSON.stringify({
-            specialty: formData.specialties[0],
-            specialties: formData.specialties,
-            experience,
-            location: formData.location.trim(),
-            bio: formData.bio.trim(),
-          }),
-        }
-      );
+    // Rifresko formën me të dhënat e ruajtura
+    setFormData({
+      specialties:
+        data.doctor.specialties?.length > 0
+          ? data.doctor.specialties
+          : data.doctor.specialty
+          ? [data.doctor.specialty]
+          : [],
 
-      const data = await response.json();
+      experience:
+        data.doctor.experience ?? "",
 
-      if (!response.ok) {
-        setMessage(
-          data.message ||
-            "Could not update profile."
-        );
-        return;
-      }
+      location:
+        data.doctor.location || "",
 
-      setDoctor(data.doctor);
+      bio:
+        data.doctor.bio || "",
+    });
 
-      setFormData({
-          specialties:
-            data.doctor.specialties?.length > 0
-              ? data.doctor.specialties
-              : data.doctor.specialty
-              ? [data.doctor.specialty]
-              : [],
-          experience: data.doctor.experience ?? "",
-          location: data.doctor.location || "",
-          bio: data.doctor.bio || "",
-        });
+    // Pastro modalin e fotos
+    setPhotoModalOpen(false);
+    setTemporaryImage(null);
+    setTemporaryPreview("");
 
-      setEditing(false);
+    // Kthehu prej Edit Mode në profil normal
+    setEditing(false);
 
-      setMessage(
-        "Profile updated successfully."
-      );
-    } catch (error) {
-      console.error(
-        "Update doctor profile error:",
-        error
-      );
+    setMessage(
+      "Profile updated successfully."
+    );
+  } catch (error) {
+    console.error(
+      "Update doctor profile error:",
+      error
+    );
 
-      setMessage(
-        "Cannot connect to the server."
-      );
-    } finally {
-      setSaving(false);
-    }
-  };
+    setMessage(
+      "Cannot connect to the server."
+    );
+  } finally {
+    setSaving(false);
+  }
+};
 
   // =========================
   // LOADING
@@ -303,14 +500,15 @@ function DoctorProfile() {
     return (
       <main className="doctor-profile-page">
         <div className="doctor-profile-loading">
-          {message || "Doctor profile not found."}
+          {message ||
+            "Doctor profile not found."}
         </div>
       </main>
     );
   }
 
   // =========================
-  // VERIFICATION
+  // DOCTOR INFORMATION
   // =========================
 
   const verificationText =
@@ -331,6 +529,24 @@ function DoctorProfile() {
     user?.email ||
     "";
 
+  const doctorSpecialties =
+    doctor.specialties?.length > 0
+      ? doctor.specialties
+      : doctor.specialty
+      ? [doctor.specialty]
+      : [];
+
+      const hasChanges =
+      profileImage !== null ||
+      JSON.stringify(formData.specialties) !==
+        JSON.stringify(doctorSpecialties) ||
+      String(formData.experience) !==
+        String(doctor.experience ?? "") ||
+      formData.location !==
+        (doctor.location || "") ||
+      formData.bio !==
+        (doctor.bio || "");
+
   // =========================
   // JSX
   // =========================
@@ -344,6 +560,7 @@ function DoctorProfile() {
         <div className="doctor-profile-header">
           <div>
             <p>Doctor Account</p>
+
             <h1>My Profile</h1>
 
             <span>
@@ -367,11 +584,35 @@ function DoctorProfile() {
         {/* PROFILE HERO */}
 
         <section className="doctor-profile-hero">
-          <div className="doctor-profile-avatar">
-            {doctorName
-              .charAt(0)
-              .toUpperCase()}
+
+          {/* PROFILE PHOTO */}
+
+          <div className="doctor-profile-photo-wrapper">
+            <div className="doctor-profile-avatar">
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt={`${doctorName} profile`}
+                />
+              ) : (
+                doctorName
+                  .charAt(0)
+                  .toUpperCase()
+              )}
+            </div>
+
+            {editing && (
+              <button
+                type="button"
+                className="doctor-change-photo-btn"
+                onClick={openPhotoModal}
+              >
+                Change photo
+              </button>
+            )}
           </div>
+
+          {/* DOCTOR INFO */}
 
           <div className="doctor-profile-identity">
             <h2>{doctorName}</h2>
@@ -379,20 +620,16 @@ function DoctorProfile() {
             <p>{doctorEmail}</p>
 
             <div className="doctor-profile-badges">
-              {(
-                  doctor.specialties?.length > 0
-                    ? doctor.specialties
-                    : doctor.specialty
-                    ? [doctor.specialty]
-                    : []
-                ).map((specialty) => (
+              {doctorSpecialties.map(
+                (specialty) => (
                   <span
                     className="specialty-badge"
                     key={specialty}
                   >
                     {specialty}
                   </span>
-                ))}
+                )
+              )}
 
               <span
                 className={`verification-badge verification-${doctor.verificationStatus}`}
@@ -415,6 +652,84 @@ function DoctorProfile() {
             </button>
           )}
         </section>
+
+        {/* PHOTO UPLOAD MODAL */}
+
+        {photoModalOpen && (
+          <div className="doctor-photo-modal-overlay">
+            <div className="doctor-photo-modal">
+
+              <div className="doctor-photo-modal-header">
+                <h2>Upload profile photo</h2>
+
+                <button
+                  type="button"
+                  className="doctor-photo-modal-close"
+                  onClick={closePhotoModal}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="doctor-photo-preview">
+                {temporaryPreview ? (
+                  <img
+                    src={temporaryPreview}
+                    alt="Profile preview"
+                  />
+                ) : (
+                  <span>
+                    {doctorName
+                      .charAt(0)
+                      .toUpperCase()}
+                  </span>
+                )}
+              </div>
+
+              <label
+                htmlFor="doctor-photo-upload"
+                className="doctor-photo-upload-box"
+              >
+                <strong>
+                  📷 Upload image
+                </strong>
+
+                <span>
+                  JPG or PNG, maximum 5 MB
+                </span>
+              </label>
+
+              <input
+                id="doctor-photo-upload"
+                type="file"
+                accept=".jpg,.jpeg,.png"
+                onChange={
+                  handleProfileImageChange
+                }
+                hidden
+              />
+
+              <div className="doctor-photo-modal-actions">
+                <button
+                  type="button"
+                  className="doctor-photo-cancel-btn"
+                  onClick={closePhotoModal}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  className="doctor-photo-save-btn"
+                  onClick={confirmPhoto}
+                  disabled={!temporaryImage}
+                >
+                  Save photo
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* MESSAGE */}
 
@@ -474,44 +789,55 @@ function DoctorProfile() {
               </small>
             </div>
 
-            {/* SPECIALTY */}
+            {/* SPECIALTIES */}
 
             <div className="profile-field profile-field-full">
               <label>
                 Specialties
+
                 <span className="specialty-limit">
                   {formData.specialties.length}/2 selected
                 </span>
               </label>
 
               <div className="profile-specialty-options">
-                {specialtyOptions.map((specialty) => {
-                  const isSelected =
-                    formData.specialties.includes(specialty);
+                {specialtyOptions.map(
+                  (specialty) => {
+                    const isSelected =
+                      formData.specialties.includes(
+                        specialty
+                      );
 
-                  return (
-                    <button
-                      key={specialty}
-                      type="button"
-                      disabled={!editing}
-                      onClick={() =>
-                        handleSpecialtyToggle(specialty)
-                      }
-                      className={
-                        isSelected
-                          ? "profile-specialty-option specialty-selected"
-                          : "profile-specialty-option"
-                      }
-                    >
-                      {isSelected && <span>✓</span>}
-                      {specialty}
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={specialty}
+                        type="button"
+                        disabled={!editing}
+                        onClick={() =>
+                          handleSpecialtyToggle(
+                            specialty
+                          )
+                        }
+                        className={
+                          isSelected
+                            ? "profile-specialty-option specialty-selected"
+                            : "profile-specialty-option"
+                        }
+                      >
+                        {isSelected && (
+                          <span>✓</span>
+                        )}
+
+                        {specialty}
+                      </button>
+                    );
+                  }
+                )}
               </div>
 
               <small>
-                Select up to two verified medical specialties.
+                Select up to two verified
+                medical specialties.
               </small>
             </div>
 
@@ -543,14 +869,16 @@ function DoctorProfile() {
                 onChange={handleChange}
                 disabled={!editing}
               >
-                {locations.map((location) => (
-                  <option
-                    key={location}
-                    value={location}
-                  >
-                    {location}
-                  </option>
-                ))}
+                {locations.map(
+                  (location) => (
+                    <option
+                      key={location}
+                      value={location}
+                    >
+                      {location}
+                    </option>
+                  )
+                )}
               </select>
             </div>
 
@@ -564,8 +892,7 @@ function DoctorProfile() {
               <input
                 type="text"
                 value={
-                  doctor.appointmentDuration ===
-                  60
+                  doctor.appointmentDuration === 60
                     ? "1 hour"
                     : `${doctor.appointmentDuration} minutes`
                 }
@@ -581,7 +908,9 @@ function DoctorProfile() {
             {/* BIO */}
 
             <div className="profile-field profile-field-full">
-              <label>Professional bio</label>
+              <label>
+                Professional bio
+              </label>
 
               <textarea
                 name="bio"
@@ -606,16 +935,18 @@ function DoctorProfile() {
                 Cancel
               </button>
 
-              <button
-                type="button"
-        className="profile-save-btn"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving
-                  ? "Saving..."
-                  : "Save Changes"}
-              </button>
+              {hasChanges && (
+                <button
+                  type="button"
+                  className="profile-save-btn"
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  {saving
+                    ? "Saving..."
+                    : "Save Changes"}
+                </button>
+              )}
             </div>
           )}
         </section>
@@ -652,8 +983,7 @@ function DoctorProfile() {
               </span>
 
               <strong>
-                {doctor.appointmentDuration ===
-                60
+                {doctor.appointmentDuration === 60
                   ? "1 hour"
                   : `${doctor.appointmentDuration} min`}
               </strong>

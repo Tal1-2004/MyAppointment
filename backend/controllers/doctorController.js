@@ -242,77 +242,127 @@ const bcrypt = require("bcryptjs");
     }
   };
 
-  const updateDoctorProfile = async (req, res) => {
-    try {
-      const {
-        specialty,
-        specialties,
-        experience,
-        location,
-        bio,
-      } = req.body;
+    const updateDoctorProfile = async (req, res) => {
+      try {
+        const {
+          specialty,
+          specialties,
+          experience,
+          location,
+          bio,
+        } = req.body;
 
-      const doctor = await Doctor.findOne({
-        user: req.params.userId,
-      });
-
-      if (!doctor) {
-        return res.status(404).json({
-          message: "Doctor profile not found",
+        const doctor = await Doctor.findOne({
+          user: req.params.userId,
         });
-      }
 
-      if (experience !== undefined) {
-        doctor.experience = Number(experience);
-      }
-
-      if (location !== undefined) {
-        doctor.location = location;
-      }
-
-      if (bio !== undefined) {
-        doctor.bio = bio;
-      }
-
-      if (specialties !== undefined) {
-        if (
-          !Array.isArray(specialties) ||
-          specialties.length === 0 ||
-          specialties.length > 2
-        ) {
-          return res.status(400).json({
-            message:
-              "Select between one and two specialties",
+        if (!doctor) {
+          return res.status(404).json({
+            message: "Doctor profile not found",
           });
         }
 
-        doctor.specialties = specialties;
+        // =========================
+        // EXPERIENCE
+        // =========================
 
-        // Specialiteti i parë mbetet primary
-        // për pjesët e vjetra të aplikacionit.
-        doctor.specialty = specialties[0];
-      } else if (specialty !== undefined) {
-        doctor.specialty = specialty;
-        doctor.specialties = [specialty];
+        if (experience !== undefined) {
+          doctor.experience = Number(experience);
+        }
+
+        // =========================
+        // LOCATION
+        // =========================
+
+        if (location !== undefined) {
+          doctor.location = location;
+        }
+
+        // =========================
+        // BIO
+        // =========================
+
+        if (bio !== undefined) {
+          doctor.bio = bio;
+        }
+
+        // =========================
+        // SPECIALTIES
+        // =========================
+
+        if (specialties !== undefined) {
+          let parsedSpecialties;
+
+          try {
+            parsedSpecialties =
+              typeof specialties === "string"
+                ? JSON.parse(specialties)
+                : specialties;
+          } catch (error) {
+            return res.status(400).json({
+              message: "Invalid specialties format",
+            });
+          }
+
+          if (
+            !Array.isArray(parsedSpecialties) ||
+            parsedSpecialties.length === 0 ||
+            parsedSpecialties.length > 2
+          ) {
+            return res.status(400).json({
+              message:
+                "Select between one and two specialties",
+            });
+          }
+
+          doctor.specialties =
+            parsedSpecialties;
+
+          // Specialiteti i parë mbetet primary
+          doctor.specialty =
+            parsedSpecialties[0];
+        } else if (specialty !== undefined) {
+          doctor.specialty = specialty;
+          doctor.specialties = [specialty];
+        }
+
+        // =========================
+        // PROFILE IMAGE
+        // =========================
+
+        if (req.file) {
+          doctor.profileImage =
+            req.file.path.replaceAll("\\", "/");
+        }
+
+        // =========================
+        // SAVE
+        // =========================
+
+        await doctor.save();
+
+        await doctor.populate(
+          "user",
+          "name email"
+        );
+
+        return res.status(200).json({
+          message:
+            "Doctor profile updated successfully",
+          doctor,
+        });
+      } catch (error) {
+        console.error(
+          "Update doctor profile error:",
+          error
+        );
+
+        return res.status(500).json({
+          message: "Server error",
+          error: error.message,
+        });
       }
-
-      await doctor.save();
-
-      await doctor.populate("user", "name email");
-
-      return res.status(200).json({
-        message: "Doctor profile updated successfully",
-        doctor,
-      });
-    } catch (error) {
-      console.error("Update doctor profile error:", error);
-
-      return res.status(500).json({
-        message: "Server error",
-        error: error.message,
-      });
-    }
-  };
+    };
   
   
   module.exports = {

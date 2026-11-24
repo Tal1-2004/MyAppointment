@@ -46,6 +46,7 @@ router.get(
 
 router.put(
   "/profile/:userId",
+  upload.single("profileImage"),
   updateDoctorProfile
 );
 
