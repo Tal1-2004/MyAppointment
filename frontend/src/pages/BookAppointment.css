@@ -628,3 +628,27 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Ditët normale që mund të zgjidhen */
+.calendar-day:not(:disabled) {
+  border: 1px solid #d9e2df;
+}
+
+/* Kur kalon mausin sipër */
+.calendar-day:not(:disabled):hover {
+  border-color: #7db6a7;
+}
+
+/* Ditët kur doktori nuk punon */
+.calendar-day.unavailable-day {
+  border: none;
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Ditët që kanë kaluar */
+.calendar-day.past-day {
+  border: none;
+}

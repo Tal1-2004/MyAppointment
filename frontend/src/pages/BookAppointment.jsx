@@ -51,10 +51,7 @@ function BookAppointment() {
 
         setAvailableDoctors(data.doctors || []);
       } catch (error) {
-        console.error(
-          "Load doctors error:",
-          error
-        );
+        console.error("Load doctors error:", error);
 
         setMessage(
           "Cannot load doctors from the server."
@@ -141,18 +138,108 @@ function BookAppointment() {
       doctor.location === formData.location
   );
 
+  const selectedDoctor = availableDoctors.find(
+    (doctor) => doctor._id === formData.doctor
+  );
+
   // =========================
   // TIMES
   // =========================
 
-  const times = [
-    "09:00",
-    "10:00",
-    "11:00",
-    "13:00",
-    "14:00",
-    "15:00",
+  const appointmentDuration =
+    Number(selectedDoctor?.appointmentDuration) || 30;
+
+  const dayNames = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
   ];
+
+  const timeToMinutes = (time) => {
+    if (!time || !time.includes(":")) {
+      return 0;
+    }
+
+    const [hours, minutes] = time
+      .split(":")
+      .map(Number);
+
+    return hours * 60 + minutes;
+  };
+
+  const minutesToTime = (totalMinutes) => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    return `${String(hours).padStart(2, "0")}:${String(
+      minutes
+    ).padStart(2, "0")}`;
+  };
+
+  const generateTimesForDate = () => {
+    if (
+      !formData.date ||
+      !selectedDoctor?.availability
+    ) {
+      return [];
+    }
+
+    const selectedDate = new Date(
+      `${formData.date}T00:00:00`
+    );
+
+    const selectedDayName =
+      dayNames[selectedDate.getDay()];
+
+    const dayAvailability =
+      selectedDoctor.availability[selectedDayName];
+
+    if (
+      !dayAvailability?.enabled ||
+      !dayAvailability.periods?.length
+    ) {
+      return [];
+    }
+
+    const generatedTimes = [];
+
+    dayAvailability.periods.forEach((period) => {
+      if (!period.startTime || !period.endTime) {
+        return;
+      }
+
+      let currentMinutes = timeToMinutes(
+        period.startTime
+      );
+
+      const endMinutes = timeToMinutes(
+        period.endTime
+      );
+
+      while (
+        currentMinutes + appointmentDuration <=
+        endMinutes
+      ) {
+        generatedTimes.push(
+          minutesToTime(currentMinutes)
+        );
+
+        currentMinutes += appointmentDuration;
+      }
+    });
+
+    return [...new Set(generatedTimes)].sort(
+      (firstTime, secondTime) =>
+        timeToMinutes(firstTime) -
+        timeToMinutes(secondTime)
+    );
+  };
+
+  const times = generateTimesForDate();
 
   // =========================
   // FORM
@@ -180,25 +267,34 @@ function BookAppointment() {
         time: "",
       }),
     }));
+
+    if (
+      name === "specialty" ||
+      name === "location"
+    ) {
+      setBookedTimes([]);
+      setMessage("");
+    }
   };
 
   const handleDoctorChange = (e) => {
     const doctorId = e.target.value;
 
-    const selectedDoctor = availableDoctors.find(
-      (doctor) => doctor._id === doctorId
+    const doctor = availableDoctors.find(
+      (item) => item._id === doctorId
     );
 
     setFormData((current) => ({
       ...current,
       doctor: doctorId,
-      doctorName:
-        selectedDoctor?.user?.name || "",
+      doctorName: doctor?.user?.name || "",
       date: "",
       time: "",
     }));
 
     setBookedTimes([]);
+    setCalendarOpen(false);
+    setMessage("");
   };
 
   // =========================
@@ -208,11 +304,13 @@ function BookAppointment() {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
-  const monthName =
-    currentMonth.toLocaleString("en-US", {
+  const monthName = currentMonth.toLocaleString(
+    "en-US",
+    {
       month: "long",
       year: "numeric",
-    });
+    }
+  );
 
   const daysInMonth = new Date(
     year,
@@ -221,24 +319,15 @@ function BookAppointment() {
   ).getDate();
 
   const firstDayOfMonth =
-    (new Date(year, month, 1).getDay() + 6) %
-    7;
+    (new Date(year, month, 1).getDay() + 6) % 7;
 
   const calendarDays = [];
 
-  for (
-    let i = 0;
-    i < firstDayOfMonth;
-    i++
-  ) {
+  for (let i = 0; i < firstDayOfMonth; i++) {
     calendarDays.push(null);
   }
 
-  for (
-    let day = 1;
-    day <= daysInMonth;
-    day++
-  ) {
+  for (let day = 1; day <= daysInMonth; day++) {
     calendarDays.push(day);
   }
 
@@ -275,38 +364,28 @@ function BookAppointment() {
       now.getDate()
     );
 
-    let validTimes = times;
+    let validTimes = [...times];
 
     // Nëse është sot, hiqi orët që kanë kaluar
     if (formData.date === todayDate) {
       const currentMinutes =
-        now.getHours() * 60 +
-        now.getMinutes();
+        now.getHours() * 60 + now.getMinutes();
 
-      validTimes = times.filter((time) => {
-        const [hours, minutes] = time
-          .split(":")
-          .map(Number);
-
+      validTimes = validTimes.filter((time) => {
         const appointmentMinutes =
-          hours * 60 + minutes;
+          timeToMinutes(time);
 
-        return (
-          appointmentMinutes >
-          currentMinutes
-        );
+        return appointmentMinutes > currentMinutes;
       });
     }
 
-    // Hiqi edhe orët e rezervuara
+    // Hiqi orët e rezervuara
     return validTimes.filter(
-      (time) =>
-        !bookedTimes.includes(time)
+      (time) => !bookedTimes.includes(time)
     );
   };
 
-  const availableTimes =
-    getAvailableTimes();
+  const availableTimes = getAvailableTimes();
 
   const handleTimeSelect = (time) => {
     if (
@@ -320,6 +399,66 @@ function BookAppointment() {
       ...current,
       time,
     }));
+
+    setMessage("");
+  };
+
+  // =========================
+  // CALENDAR HELPERS
+  // =========================
+
+  const isPastDate = (day) => {
+    if (!day) return false;
+
+    const date = new Date(year, month, day);
+    date.setHours(0, 0, 0, 0);
+
+    return date < today;
+  };
+
+  const isDoctorUnavailable = (day) => {
+    if (
+      !day ||
+      !selectedDoctor?.availability
+    ) {
+      return false;
+    }
+
+    const date = new Date(year, month, day);
+
+    const dayName = dayNames[date.getDay()];
+
+    const dayAvailability =
+      selectedDoctor.availability[dayName];
+
+    return (
+      !dayAvailability?.enabled ||
+      !dayAvailability.periods?.some(
+        (period) =>
+          period.startTime && period.endTime
+      )
+    );
+  };
+
+  const isSelectedDate = (day) => {
+    if (!day || !formData.date) {
+      return false;
+    }
+
+    return (
+      formData.date ===
+      formatDate(year, month, day)
+    );
+  };
+
+  const isToday = (day) => {
+    if (!day) return false;
+
+    return (
+      today.getFullYear() === year &&
+      today.getMonth() === month &&
+      today.getDate() === day
+    );
   };
 
   const selectDate = (day) => {
@@ -337,11 +476,34 @@ function BookAppointment() {
       return;
     }
 
+    const selectedDayName =
+      dayNames[selectedDate.getDay()];
+
+    const dayAvailability =
+      selectedDoctor?.availability?.[
+        selectedDayName
+      ];
+
+    if (
+      !dayAvailability?.enabled ||
+      !dayAvailability.periods?.some(
+        (period) =>
+          period.startTime && period.endTime
+      )
+    ) {
+      ge(
+        "This doctor is not available on the selected day."
+      );
+      return;
+    }
+
     const dateString = formatDate(
       year,
       month,
       day
     );
+
+    setMessage("");
 
     setFormData((current) => ({
       ...current,
@@ -376,41 +538,6 @@ function BookAppointment() {
   const nextMonth = () => {
     setCurrentMonth(
       new Date(year, month + 1, 1)
-    );
-  };
-
-  const isPastDate = (day) => {
-    if (!day) return false;
-
-    const date = new Date(
-      year,
-      month,
-      day
-    );
-
-    date.setHours(0, 0, 0, 0);
-
-    return date < today;
-  };
-
-  const isSelectedDate = (day) => {
-    if (!day || !formData.date) {
-      return false;
-    }
-
-    return (
-      formData.date ===
-      formatDate(year, month, day)
-    );
-  };
-
-  const isToday = (day) => {
-    if (!day) return false;
-
-    return (
-      today.getFullYear() === year &&
-      today.getMonth() === month &&
-      today.getDate() === day
     );
   };
 
@@ -451,6 +578,14 @@ function BookAppointment() {
       return;
     }
 
+    // Sigurohu që ora është ende valide
+    if (!availableTimes.includes(formData.time)) {
+      setMessage(
+        "This appointment time is no longer available."
+      );
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -460,19 +595,15 @@ function BookAppointment() {
           method: "POST",
 
           headers: {
-            "Content-Type":
-              "application/json",
-
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
 
           body: JSON.stringify({
             patient: user.id,
             doctor: formData.doctor,
-            doctorName:
-              formData.doctorName,
-            specialty:
-              formData.specialty,
+            doctorName: formData.doctorName,
+            specialty: formData.specialty,
             date: formData.date,
             time: formData.time,
             reason: formData.reason,
@@ -480,8 +611,7 @@ function BookAppointment() {
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
         setMessage(
@@ -489,8 +619,8 @@ function BookAppointment() {
             "Appointment booking failed."
         );
 
-        // Refresh booked slots if someone
-        // booked the same time before us.
+        // Dikush tjetër e ka rezervuar
+        // të njëjtën orë ndërkohë
         if (response.status === 409) {
           setFormData((current) => ({
             ...current,
@@ -498,10 +628,9 @@ function BookAppointment() {
           }));
 
           try {
-            const slotsResponse =
-              await fetch(
-                `http://localhost:5000/api/appointments/booked-slots?doctor=${formData.doctor}&date=${formData.date}`
-              );
+            const slotsResponse = await fetch(
+              `http://localhost:5000/api/appointments/booked-slots?doctor=${formData.doctor}&date=${formData.date}`
+            );
 
             const slotsData =
               await slotsResponse.json();
@@ -567,8 +696,8 @@ function BookAppointment() {
           <h1>Book an Appointment</h1>
 
           <p>
-            Choose a doctor and a time that
-            works best for you.
+            Choose a doctor and a time that works
+            best for you.
           </p>
         </div>
 
@@ -584,13 +713,9 @@ function BookAppointment() {
 
             <select
               name="specialty"
-              value={
-                formData.specialty
-              }
+              value={formData.specialty}
               onChange={handleChange}
-              disabled={
-                doctorsLoading
-              }
+              disabled={doctorsLoading}
               required
             >
               <option value="">
@@ -599,16 +724,14 @@ function BookAppointment() {
                   : "Select specialty"}
               </option>
 
-              {specialties.map(
-                (specialty) => (
-                  <option
-                    key={specialty}
-                    value={specialty}
-                  >
-                    {specialty}
-                  </option>
-                )
-              )}
+              {specialties.map((specialty) => (
+                <option
+                  key={specialty}
+                  value={specialty}
+                >
+                  {specialty}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -619,13 +742,9 @@ function BookAppointment() {
 
             <select
               name="location"
-              value={
-                formData.location
-              }
+              value={formData.location}
               onChange={handleChange}
-              disabled={
-                !formData.specialty
-              }
+              disabled={!formData.specialty}
               required
             >
               <option value="">
@@ -634,16 +753,14 @@ function BookAppointment() {
                   : "Select city"}
               </option>
 
-              {locations.map(
-                (location) => (
-                  <option
-                    key={location}
-                    value={location}
-                  >
-                    {location}
-                  </option>
-                )
-              )}
+              {locations.map((location) => (
+                <option
+                  key={location}
+                  value={location}
+                >
+                  {location}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -655,9 +772,7 @@ function BookAppointment() {
             <select
               name="doctor"
               value={formData.doctor}
-              onChange={
-                handleDoctorChange
-              }
+              onChange={handleDoctorChange}
               disabled={
                 !formData.specialty ||
                 !formData.location ||
@@ -669,20 +784,18 @@ function BookAppointment() {
                 {!formData.specialty
                   ? "Select specialty first"
                   : !formData.location
-                    ? "Select city first"
-                    : "Select doctor"}
+                  ? "Select city first"
+                  : "Select doctor"}
               </option>
 
-              {filteredDoctors.map(
-                (doctor) => (
-                  <option
-                    key={doctor._id}
-                    value={doctor._id}
-                  >
-                    {doctor.user?.name}
-                  </option>
-                )
-              )}
+              {filteredDoctors.map((doctor) => (
+                <option
+                  key={doctor._id}
+                  value={doctor._id}
+                >
+                  {doctor.user?.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -694,17 +807,12 @@ function BookAppointment() {
             <button
               type="button"
               className={`date-selector ${
-                formData.date
-                  ? "has-date"
-                  : ""
+                formData.date ? "has-date" : ""
               }`}
-              disabled={
-                !formData.doctor
-              }
+              disabled={!formData.doctor}
               onClick={() =>
                 setCalendarOpen(
-                  (current) =>
-                    !current
+                  (current) => !current
                 )
               }
             >
@@ -716,15 +824,13 @@ function BookAppointment() {
                       "en-GB",
                       {
                         day: "2-digit",
-                        month:
-                          "long",
-                        year:
-                          "numeric",
+                        month: "long",
+                        year: "numeric",
                       }
                     )
                   : formData.doctor
-                    ? "Choose appointment date"
-                    : "Choose a doctor first"}
+                  ? "Choose appointment date"
+                  : "Choose a doctor first"}
               </span>
 
               <span className="calendar-icon">
@@ -738,13 +844,10 @@ function BookAppointment() {
               <div className="custom-calendar">
 
                 <div className="calendar-header">
-
                   <button
                     type="button"
                     className="calendar-arrow"
-                    onClick={
-                      previousMonth
-                    }
+                    onClick={previousMonth}
                     disabled={
                       year ===
                         today.getFullYear() &&
@@ -752,22 +855,18 @@ function BookAppointment() {
                         today.getMonth()
                     }
                   >
-                    </button>
+                    ‹
+                  </button>
 
-                  <h3>
-                    {monthName}
-                  </h3>
+                  <h3>{monthName}</h3>
 
                   <button
                     type="button"
                     className="calendar-arrow"
-                    onClick={
-                      nextMonth
-                    }
+                    onClick={nextMonth}
                   >
                     ›
                   </button>
-
                 </div>
 
                 <div className="calendar-weekdays">
@@ -781,7 +880,6 @@ function BookAppointment() {
                 </div>
 
                 <div className="calendar-grid">
-
                   {calendarDays.map(
                     (day, index) => {
                       if (!day) {
@@ -796,10 +894,11 @@ function BookAppointment() {
                       const past =
                         isPastDate(day);
 
+                      const doctorUnavailable =
+                        isDoctorUnavailable(day);
+
                       const selected =
-                        isSelectedDate(
-                          day
-                        );
+                        isSelectedDate(day);
 
                       const currentDay =
                         isToday(day);
@@ -808,17 +907,22 @@ function BookAppointment() {
                         <button
                           type="button"
                           key={day}
-                          disabled={past}
+                          disabled={
+                            past ||
+                            doctorUnavailable
+                          }
                           onClick={() =>
-                            selectDate(
-                              day
-                            )
+                            selectDate(day)
                           }
                           className={[
                             "calendar-day",
 
                             past
                               ? "past-day"
+                              : "",
+
+                            doctorUnavailable
+                              ? "unavailable-day"
                               : "",
 
                             selected
@@ -829,9 +933,7 @@ function BookAppointment() {
                               ? "today"
                               : "",
                           ]
-                            .filter(
-                              Boolean
-                            )
+                            .filter(Boolean)
                             .join(" ")}
                         >
                           {day}
@@ -839,11 +941,9 @@ function BookAppointment() {
                       );
                     }
                   )}
-
                 </div>
 
                 <div className="calendar-footer">
-
                   <span className="calendar-legend">
                     <span className="legend-dot today-dot" />
                     Today
@@ -853,12 +953,9 @@ function BookAppointment() {
                     <span className="legend-dot selected-dot" />
                     Selected
                   </span>
-
                 </div>
-
               </div>
             )}
-
           </div>
 
           {/* TIME */}
@@ -872,96 +969,90 @@ function BookAppointment() {
               </div>
             ) : slotsLoading ? (
               <div className="time-slots-message">
-                Loading available
-                times...
+                Loading available times...
               </div>
             ) : (
               <>
                 <div className="time-slots">
+                  {times.map((time) => {
+                    const isBooked =
+                      bookedTimes.includes(time);
 
-                  {times.map(
-                    (time) => {
-                      const isBooked =
-                        bookedTimes.includes(
-                          time
-                        );
+                    const isAvailable =
+                      availableTimes.includes(
+                        time
+                      );
 
-                      const isAvailable =
-                        availableTimes.includes(
-                          time
-                        );
+                    const isSelected =
+                      formData.time === time;
 
-                      const isSelected =
-                        formData.time ===
-                        time;
+                    const isDisabled =
+                      isBooked ||
+                      !isAvailable;
 
-                      const isDisabled =
-                        isBooked ||
-                        !isAvailable;
+                    return (
+                      <button
+                        key={time}
+                        type="button"
+                        disabled={isDisabled}
+                        onClick={() =>
+                          handleTimeSelect(
+                            time
+                          )
+                        }
+                        className={[
+                          "time-slot",
 
-                      return (
-                        <button
-                          key={time}
-                          type="button"
-                          disabled={
-                            isDisabled
-                          }
-                          onClick={() =>
-                            handleTimeSelect(
-                              time
-                            )
-                          }
-                          className={[
-                            "time-slot",
+                          isSelected
+                            ? "time-slot-selected"
+                            : "",
 
-                            isSelected
-                              ? "time-slot-selected"
-                              : "",
+                          isBooked
+                            ? "time-slot-booked"
+                            : "",
 
-                            isBooked
-                              ? "time-slot-booked"
-                              : "",
+                          !isBooked &&
+                          !isAvailable
+                            ? "time-slot-passed"
+                            : "",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                      >
+                        <span>{time}</span>
 
-                            !isBooked &&
-                            !isAvailable
-                              ? "time-slot-passed"
-                              : "",
-                          ]
-                            .filter(
-                              Boolean
-                            )
-                            .join(" ")}
-                        >
-                          <span>
-                            {time}
-                          </span>
+                        {isBooked && (
+                          <small>
+                            Booked
+                          </small>
+                        )}
 
-                          {isBooked && (
+                        {!isBooked &&
+                          !isAvailable && (
                             <small>
-                              Booked
+                              Passed
                             </small>
                           )}
-
-                          {!isBooked &&
-                            !isAvailable && (
-                              <small>
-                                Passed
-                              </small>
-                            )}
-                        </button>
-                      );
-                    }
-                  )}
-
+                      </button>
+                    );
+                  })}
                 </div>
 
-                {availableTimes.length ===
-                  0 && (
+                {times.length === 0 && (
                   <p className="no-time-slots">
-                    No available times
-                    for this date.
+                    The doctor is not available
+                    on this date.
                   </p>
                 )}
+
+                {times.length > 0 &&
+                  availableTimes.length ===
+                    0 && (
+                    <p className="no-time-slots">
+                      No available times for
+                      this date.
+                    </p>
+                  )}
               </>
             )}
           </div>
@@ -969,9 +1060,7 @@ function BookAppointment() {
           {/* REASON */}
 
           <div className="booking-group">
-            <label>
-              Reason for visit
-            </label>
+            <label>Reason for visit</label>
 
             <textarea
               name="reason"
@@ -1006,7 +1095,6 @@ function BookAppointment() {
               ? "Booking..."
               : "Confirm Appointment"}
           </button>
-
         </form>
 
         <a
@@ -1015,7 +1103,6 @@ function BookAppointment() {
         >
           ← Back to Home
         </a>
-
       </div>
     </div>
   );

@@ -260,7 +260,11 @@ function DoctorDashboard() {
             📅 Appointments
           </button>
 
-          <button>
+                    <button
+            onClick={() =>
+              window.location.href = "/doctor-availability"
+            }
+          >
             🕒 Availability
           </button>
 
@@ -631,21 +635,18 @@ function DoctorDashboard() {
 
           <div className="doctor-quick-actions">
 
-            <button type="button">
-
+            <button
+              type="button"
+              onClick={() =>
+                window.location.href = "/doctor-availability"
+              }
+            >
               <span>🕒</span>
 
               <div>
-                <strong>
-                  Manage Availability
-                </strong>
-
-                <p>
-                  Set your available days and
-                  hours.
-                </p>
+                <strong>Manage Availability</strong>
+                <p>Set your available days and hours.</p>
               </div>
-
             </button>
 
             <button type="button">

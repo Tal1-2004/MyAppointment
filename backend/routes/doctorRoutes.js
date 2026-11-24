@@ -3,6 +3,7 @@ const express = require("express");
 const {
   registerDoctor,
   getApprovedDoctors,
+  updateDoctorAvailability,
 } = require("../controllers/doctorController");
 
 const upload = require("../middleware/uploadMiddleware");
@@ -30,6 +31,11 @@ router.post(
   ]),
 
   registerDoctor
+);
+
+router.put(
+  "/availability",
+  updateDoctorAvailability
 );
 
 module.exports = router;

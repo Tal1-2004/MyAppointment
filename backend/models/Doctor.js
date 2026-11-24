@@ -33,6 +33,168 @@ const doctorSchema = new mongoose.Schema(
       trim: true,
     },
 
+    appointmentDuration: {
+      type: Number,
+      enum: [15, 30, 45, 60],
+      default: 30,
+    },
+
+    availability: {
+      monday: {
+        enabled: {
+          type: Boolean,
+          default: false,
+        },
+        periods: {
+          type: [
+            {
+              startTime: {
+                type: String,
+                default: "",
+              },
+              endTime: {
+                type: String,
+                default: "",
+              },
+            },
+          ],
+          default: [],
+        },
+      },
+
+      tuesday: {
+        enabled: {
+          type: Boolean,
+          default: false,
+        },
+        periods: {
+          type: [
+            {
+              startTime: {
+                type: String,
+                default: "",
+              },
+              endTime: {
+                type: String,
+                default: "",
+              },
+            },
+          ],
+          default: [],
+        },
+      },
+
+      wednesday: {
+        enabled: {
+          type: Boolean,
+          default: false,
+        },
+        periods: {
+          type: [
+            {
+              startTime: {
+                type: String,
+                default: "",
+              },
+              endTime: {
+                type: String,
+                default: "",
+              },
+            },
+          ],
+          default: [],
+        },
+      },
+
+      thursday: {
+        enabled: {
+          type: Boolean,
+          default: false,
+        },
+        periods: {
+          type: [
+            {
+              startTime: {
+                type: String,
+                default: "",
+              },
+              endTime: {
+                type: String,
+                default: "",
+              },
+            },
+          ],
+          default: [],
+        },
+      },
+
+      friday: {
+        enabled: {
+          type: Boolean,
+          default: false,
+        },
+        periods: {
+          type: [
+            {
+              startTime: {
+                type: String,
+                default: "",
+              },
+              endTime: {
+                type: String,
+                default: "",
+              },
+            },
+          ],
+          default: [],
+        },
+      },
+
+      saturday: {
+        enabled: {
+          type: Boolean,
+          default: false,
+        },
+        periods: {
+          type: [
+            {
+              startTime: {
+                type: String,
+                default: "",
+              },
+              endTime: {
+                type: String,
+                default: "",
+              },
+            },
+          ],
+          default: [],
+        },
+      },
+
+      sunday: {
+        enabled: {
+          type: Boolean,
+          default: false,
+        },
+        periods: {
+          type: [
+            {
+              startTime: {
+                type: String,
+                default: "",
+              },
+              endTime: {
+                type: String,
+                default: "",
+              },
+            },
+          ],
+          default: [],
+        },
+      },
+    },
+
     documents: {
       cv: {
         type: String,

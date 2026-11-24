@@ -112,7 +112,60 @@ const registerDoctor = async (req, res) => {
       });
     }
   };
+
+    const updateDoctorAvailability = async (req, res) => {
+    try {
+      const {
+        userId,
+        availability,
+        appointmentDuration,
+      } = req.body;
+
+      if (!userId || !availability) {
+        return res.status(400).json({
+          message: "User ID and availability are required",
+        });
+      }
+
+      const doctor = await Doctor.findOne({
+        user: userId,
+      });
+
+      if (!doctor) {
+        return res.status(404).json({
+          message: "Doctor profile not found",
+        });
+      }
+
+      doctor.availability = availability;
+      doctor.availability = availability;
+      doctor.appointmentDuration =
+        appointmentDuration;
+
+      await doctor.save();
+
+      return res.status(200).json({
+        message: "Availability updated successfully",
+        availability: doctor.availability,
+        appointmentDuration:
+          doctor.appointmentDuration,
+      });
+    } catch (error) {
+      console.error(
+        "Update doctor availability error:",
+        error
+      );
+
+      return res.status(500).json({
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  };
+  
+  
   module.exports = {
     registerDoctor,
     getApprovedDoctors,
+    updateDoctorAvailability,
   } ;
