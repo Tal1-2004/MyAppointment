@@ -14,6 +14,7 @@ import DoctorLogin from "./pages/DoctorLogin";
 import DoctorAvailability from "./pages/DoctorAvailability";
 import DoctorProfile from "./pages/DoctorProfile";
 import DoctorAppointments from "./pages/DoctorAppointments";
+import DoctorSettings from "./pages/DoctorSettings";
 
 function App() {
   return (
@@ -71,6 +72,10 @@ function App() {
       <Route
         path="/doctor-appointments"
         element={<DoctorAppointments />}
+      />
+      <Route
+        path="/doctor-settings"
+        element={<DoctorSettings />}
       />
     </Routes>
     

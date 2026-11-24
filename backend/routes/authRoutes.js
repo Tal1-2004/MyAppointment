@@ -1,12 +1,38 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
   registerUser,
   loginUser,
+  changePassword,
 } = require("../controllers/authController");
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+const {
+  protect,
+} = require("../middleware/authMiddleware");
+
+
+// REGISTER
+router.post(
+  "/register",
+  registerUser
+);
+
+
+// LOGIN
+router.post(
+  "/login",
+  loginUser
+);
+
+
+// CHANGE PASSWORD
+router.patch(
+  "/change-password",
+  protect,
+  changePassword
+);
+
 
 module.exports = router;

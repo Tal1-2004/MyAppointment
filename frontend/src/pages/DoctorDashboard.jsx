@@ -566,9 +566,14 @@ function DoctorDashboard() {
             👤 My Profile
           </button>
 
-          <button type="button">
-            ⚙ Settings
-          </button>
+          <button
+              type="button"
+              onClick={() => {
+                window.location.href = "/doctor-settings";
+              }}
+            >
+              ⚙ Settings
+            </button>
         </nav>
 
         <button
