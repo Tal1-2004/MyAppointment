@@ -14,6 +14,10 @@ const {
   protect,
 } = require("../middleware/authMiddleware");
 
+const upload = require(
+  "../middleware/uploadMiddleware"
+);
+
 
 // REGISTER
 router.post(
@@ -46,6 +50,7 @@ router.get(
 router.put(
   "/profile",
   protect,
+  upload.single("profileImage"),
   updateUserProfile
 );
 

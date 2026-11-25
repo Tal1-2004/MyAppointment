@@ -250,6 +250,15 @@ const updateUserProfile = async (req, res) => {
       user.location = location.trim();
     }
 
+    // ==============================
+    // PROFILE IMAGE
+    // ==============================
+
+    if (req.file) {
+      user.profileImage =
+        req.file.path.replaceAll("\\", "/");
+    }
+
     await user.save();
 
     return res.status(200).json({

@@ -487,3 +487,365 @@
     width: 100%;
   }
 }
+/* =========================
+   PROFILE PHOTO
+========================= */
+
+.patient-profile-photo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 7px;
+
+  flex-shrink: 0;
+}
+
+.patient-profile-avatar {
+  overflow: hidden;
+}
+
+.patient-profile-avatar img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.patient-change-photo-btn {
+  padding: 0;
+
+  color: #2f8f72;
+  background: transparent;
+
+  border: none;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.patient-change-photo-btn:hover {
+  color: #26765f;
+  text-decoration: underline;
+}
+
+
+/* =========================
+   PHOTO MODAL OVERLAY
+========================= */
+
+.patient-photo-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  background: rgba(15, 23, 42, 0.55);
+}
+
+
+/* =========================
+   PHOTO MODAL
+========================= */
+
+.patient-photo-modal {
+  width: 100%;
+  max-width: 470px;
+
+  padding: 25px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e9e6;
+  border-radius: 18px;
+
+  box-shadow:
+    0 25px 60px rgba(15, 23, 42, 0.24);
+}
+
+
+/* =========================
+   MODAL HEADER
+========================= */
+
+.patient-photo-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 22px;
+}
+
+.patient-photo-modal-header h2 {
+  margin: 0;
+
+  color: #17211e;
+
+  font-size: 21px;
+}
+
+.patient-photo-modal-close {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  color: #63706b;
+  background: #f1f4f3;
+
+  border: none;
+  border-radius: 9px;
+
+  font-size: 23px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.patient-photo-modal-close:hover {
+  color: #263530;
+  background: #e8edeb;
+}
+
+
+/* =========================
+   PHOTO PREVIEW
+========================= */
+
+.patient-photo-preview {
+  width: 120px;
+  height: 120px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 22px;
+
+  overflow: hidden;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2f8f72,
+      #65b49b
+    );
+
+  border-radius: 50%;
+
+  font-size: 42px;
+  font-weight: 700;
+}
+
+.patient-photo-preview img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+/* =========================
+   UPLOAD BOX
+========================= */
+
+.patient-photo-upload-box {
+  min-height: 110px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  color: #26765f;
+  background: #f5fbf8;
+
+  border: 2px dashed #bdded3;
+  border-radius: 14px;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.patient-photo-upload-box:hover {
+  background: #ebf8f3;
+
+  border-color: #2f8f72;
+}
+
+.patient-photo-upload-box strong {
+  font-size: 14px;
+}
+
+.patient-photo-upload-box span {
+  color: #7d8985;
+
+  font-size: 11px;
+}
+
+
+/* =========================
+   PHOTO MODAL ACTIONS
+========================= */
+
+.patient-photo-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.patient-photo-cancel-btn,
+.patient-photo-save-btn {
+  padding: 10px 17px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.patient-photo-cancel-btn {
+  color: #5f6c67;
+  background: #ffffff;
+
+  border: 1px solid #d8e1de;
+}
+
+.patient-photo-cancel-btn:hover {
+  background: #f5f7f6;
+}
+
+.patient-photo-save-btn {
+  color: #ffffff;
+  background: #2f8f72;
+
+  border: 1px solid #2f8f72;
+}
+
+.patient-photo-save-btn:hover {
+  background: #26765f;
+  border-color: #26765f;
+}
+
+.patient-photo-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* =========================
+   DATE OF BIRTH
+========================= */
+
+.patient-birth-date-selects {
+  display: grid;
+
+  grid-template-columns:
+    minmax(75px, 0.8fr)
+    minmax(130px, 1.4fr)
+    minmax(100px, 1fr);
+
+  gap: 8px;
+}
+
+.patient-birth-date-selects select {
+  width: 100%;
+
+  padding: 12px 10px;
+
+  box-sizing: border-box;
+
+  color: #27332f;
+  background: #ffffff;
+
+  border: 1px solid #d8e1de;
+  border-radius: 10px;
+
+  outline: none;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.patient-birth-date-selects select:focus {
+  border-color: #2f8f72;
+
+  box-shadow:
+    0 0 0 3px rgba(47, 143, 114, 0.1);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+  .patient-profile-photo-wrapper {
+    width: 100%;
+  }
+
+  .patient-photo-modal {
+    padding: 20px;
+  }
+
+  .patient-photo-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .patient-photo-cancel-btn,
+  .patient-photo-save-btn {
+    width: 100%;
+  }
+
+  .patient-birth-date-selects {
+    grid-template-columns: 1fr;
+  }
+}
