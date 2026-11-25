@@ -6,6 +6,8 @@ const {
   registerUser,
   loginUser,
   changePassword,
+  getUserProfile,
+  updateUserProfile,
 } = require("../controllers/authController");
 
 const {
@@ -32,6 +34,19 @@ router.patch(
   "/change-password",
   protect,
   changePassword
+);
+
+// USER PROFILE
+router.get(
+  "/profile",
+  protect,
+  getUserProfile
+);
+
+router.put(
+  "/profile",
+  protect,
+  updateUserProfile
 );
 
 

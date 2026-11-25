@@ -177,8 +177,113 @@ const registerUser = async (req, res) => {
     }
   };
 
+  // ==============================
+// GET USER PROFILE
+// ==============================
+
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(
+      req.user._id
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      user,
+    });
+  } catch (error) {
+    console.error(
+      "Get user profile error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+
+// ==============================
+// UPDATE USER PROFILE
+// ==============================
+
+const updateUserProfile = async (req, res) => {
+  try {
+    const {
+      name,
+      phone,
+      dateOfBirth,
+      location,
+    } = req.body;
+
+    const user = await User.findById(
+      req.user._id
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (name !== undefined) {
+      user.name = name.trim();
+    }
+
+    if (phone !== undefined) {
+      user.phone = phone.trim();
+    }
+
+    if (dateOfBirth !== undefined) {
+      user.dateOfBirth =
+        dateOfBirth || null;
+    }
+
+    if (location !== undefined) {
+      user.location = location.trim();
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      message:
+        "Profile updated successfully",
+
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+        dateOfBirth: user.dateOfBirth,
+        location: user.location,
+        profileImage: user.profileImage,
+      },
+    });
+  } catch (error) {
+    console.error(
+      "Update user profile error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
   module.exports = {
   registerUser,
   loginUser,
   changePassword,
+  getUserProfile,
+  updateUserProfile,
 };

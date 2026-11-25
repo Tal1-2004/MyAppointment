@@ -15,6 +15,28 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+      
+    phone: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+
+  dateOfBirth: {
+    type: Date,
+    default: null,
+  },
+
+  location: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+
+  profileImage: {
+    type: String,
+    default: "",
+  },
 
     password: {
       type: String,
