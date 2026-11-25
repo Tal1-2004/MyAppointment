@@ -111,6 +111,28 @@ const createAppointment = async (req, res) => {
           notificationError.message
         );
       }
+
+              // ==============================
+        // CREATE PATIENT NOTIFICATION
+        // ==============================
+
+        try {
+          await Notification.create({
+            patient: user._id,
+            appointment: appointment._id,
+            type: "appointment_booked",
+            title: "Appointment booked",
+            message:
+              `Your appointment with ${doctorName} ` +
+              `has been booked for ${date} at ${time}.`,
+            isRead: false,
+          });
+        } catch (notificationError) {
+          console.error(
+            "Create patient notification error:",
+            notificationError.message
+          );
+        }
       
 
     try {
@@ -275,6 +297,111 @@ const getDoctorAppointments = async (
 
         await appointment.save();
 
+                // ==============================
+        // NOTIFY PATIENT ABOUT STATUS
+        // ==============================
+
+        try {
+          if (status === "delayed") {
+            await Notification.create({
+              patient: appointment.patient,
+              appointment: appointment._id,
+              type: "appointment_delayed",
+
+              title: "Appointment delayed",
+
+              message:
+                `Your appointment with ${appointment.doctorName} ` +
+                `has been marked as delayed.`,
+
+              isRead: false,
+            });
+          }
+
+          if (status === "completed") {
+            await Notification.create({
+              patient: appointment.patient,
+              appointment: appointment._id,
+              type: "appointment_completed",
+
+              title: "Appointment completed",
+
+              message:
+                `Your appointment with ${appointment.doctorName} ` +
+                `has been marked as completed.`,
+
+              isRead: false,
+            });
+          }
+
+          if (status === "cancelled") {
+            await Notification.create({
+              patient: appointment.patient,
+              appointment: appointment._id,
+              type: "appointment_cancelled",
+
+              title: "Appointment cancelled",
+
+              message:
+                `Your appointment with ${appointment.doctorName} ` +
+                `has been cancelled.`,
+
+              isRead: false,
+            });
+          }
+        } catch (notificationError) {
+          console.error(
+            "Patient status notification error:",
+            notificationError.message
+          );
+        }
+
+
+                // ==============================
+        // NOTIFY PATIENT ABOUT STATUS
+        // ==============================
+
+        try {
+          if (status === "delayed") {
+            await Notification.create({
+              patient: appointment.patient,
+              appointment: appointment._id,
+
+              type: "appointment_delayed",
+
+              title: "Appointment delayed",
+
+              message:
+                `Your appointment with ${appointment.doctorName} ` +
+                `has been marked as delayed.`,
+
+              isRead: false,
+            });
+          }
+
+          if (status === "completed") {
+            await Notification.create({
+              patient: appointment.patient,
+              appointment: appointment._id,
+
+              type: "appointment_completed",
+
+              title: "Appointment completed",
+
+              message:
+                `Your appointment with ${appointment.doctorName} ` +
+                `has been marked as completed.`,
+
+              isRead: false,
+            });
+          }
+        } catch (notificationError) {
+          console.error(
+            "Patient status notification error:",
+            notificationError.message
+          );
+        }
+
         return res.status(200).json({
           message: `Appointment marked as ${status}`,
           appointment,
@@ -291,6 +418,141 @@ const getDoctorAppointments = async (
         });
       }
     };
+
+
+              // ==============================
+          // GET PATIENT APPOINTMENTS
+          // ==============================
+
+          const getPatientAppointments = async (
+            req,
+            res
+          ) => {
+            try {
+              const appointments =
+                await Appointment.find({
+                  patient: req.user._id,
+                })
+                  .populate({
+                    path: "doctor",
+                    populate: {
+                      path: "user",
+                      select: "name email",
+                    },
+                  })
+                  .sort({
+                    date: -1,
+                    time: -1,
+                  });
+
+              return res.status(200).json({
+                appointments,
+              });
+            } catch (error) {
+              console.error(
+                "Get patient appointments error:",
+                error
+              );
+
+              return res.status(500).json({
+                message: "Server error",
+                error: error.message,
+              });
+            }
+          };
+
+                  // ==============================
+          // PATIENT CANCEL APPOINTMENT
+          // ==============================
+
+          const cancelPatientAppointment = async (
+            req,
+            res
+          ) => {
+            try {
+              const { id } = req.params;
+
+              // Gjeje appointment-in
+              const appointment =
+                await Appointment.findById(id);
+
+              if (!appointment) {
+                return res.status(404).json({
+                  message: "Appointment not found",
+                });
+              }
+
+              // Pacienti mundet me anulu
+              // vetëm appointment-in e vet
+              if (
+                appointment.patient.toString() !==
+                req.user._id.toString()
+              ) {
+                return res.status(403).json({
+                  message:
+                    "You cannot cancel this appointment",
+                });
+              }
+
+              // Nëse është already cancelled
+              if (
+                appointment.status === "cancelled"
+              ) {
+                return res.status(400).json({
+                  message:
+                    "Appointment is already cancelled",
+                });
+              }
+
+              // Completed nuk mundet me u anulu
+              if (
+                appointment.status === "completed"
+              ) {
+                return res.status(400).json({
+                  message:
+                    "Completed appointments cannot be cancelled",
+                });
+              }
+
+              
+
+              // Ndrysho vetëm statusin direkt në MongoDB.
+              // Kjo shmang validation-in e appointment-eve
+              // të vjetra që mund të mos kenë doctor field.
+
+              const updatedAppointment =
+                await Appointment.findByIdAndUpdate(
+                  id,
+                  {
+                    $set: {
+                      status: "cancelled",
+                    },
+                  },
+                  {
+                    new: true,
+                    runValidators: false,
+                  }
+                );
+
+              return res.status(200).json({
+                message:
+                  "Appointment cancelled successfully",
+
+                appointment: updatedAppointment,
+              });
+            } catch (error) {
+              console.error(
+                "Cancel patient appointment error:",
+                error
+              );
+
+              return res.status(500).json({
+                message: "Server error",
+                error: error.message,
+              });
+            }
+};
+         
 
   const getBookedSlots = async (req, res) => {
     try {
@@ -340,6 +602,8 @@ const getDoctorAppointments = async (
 module.exports = {
   createAppointment,
   getDoctorAppointments,
+  getPatientAppointments,
   updateAppointmentStatus,
+  cancelPatientAppointment,
   getBookedSlots,
 };

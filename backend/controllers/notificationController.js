@@ -146,9 +146,137 @@ const markAllNotificationsAsRead = async (
   }
 };
 
+// ==============================
+// GET PATIENT NOTIFICATIONS
+// ==============================
+
+const getPatientNotifications = async (
+  req,
+  res
+) => {
+  try {
+    const notifications =
+      await Notification.find({
+        patient: req.user._id,
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .limit(20);
+
+    const unreadCount =
+      await Notification.countDocuments({
+        patient: req.user._id,
+        isRead: false,
+      });
+
+    return res.status(200).json({
+      notifications,
+      unreadCount,
+    });
+  } catch (error) {
+    console.error(
+      "Get patient notifications error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+
+// ==============================
+// MARK PATIENT NOTIFICATION READ
+// ==============================
+
+const markPatientNotificationAsRead = async (
+  req,
+  res
+) => {
+  try {
+    const notification =
+      await Notification.findOne({
+        _id: req.params.id,
+        patient: req.user._id,
+      });
+
+    if (!notification) {
+      return res.status(404).json({
+        message:
+          "Notification not found",
+      });
+    }
+
+    notification.isRead = true;
+
+    await notification.save();
+
+    return res.status(200).json({
+      message:
+        "Notification marked as read",
+
+      notification,
+    });
+  } catch (error) {
+    console.error(
+      "Mark patient notification read error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+
+// ==============================
+// MARK ALL PATIENT NOTIFICATIONS
+// ==============================
+
+const markAllPatientNotificationsAsRead =
+  async (req, res) => {
+    try {
+      await Notification.updateMany(
+        {
+          patient: req.user._id,
+          isRead: false,
+        },
+        {
+          $set: {
+            isRead: true,
+          },
+        }
+      );
+
+      return res.status(200).json({
+        message:
+          "All notifications marked as read",
+      });
+    } catch (error) {
+      console.error(
+        "Mark all patient notifications read error:",
+        error
+      );
+
+      return res.status(500).json({
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  };
+
 
 module.exports = {
   getDoctorNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
+
+  getPatientNotifications,
+  markPatientNotificationAsRead,
+  markAllPatientNotificationsAsRead,
 };

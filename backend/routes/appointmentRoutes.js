@@ -4,9 +4,13 @@ const router = express.Router();
 const {
   createAppointment,
   getDoctorAppointments,
+  getPatientAppointments,
   updateAppointmentStatus,
+  cancelPatientAppointment,
   getBookedSlots,
-} = require("../controllers/appointmentController");
+} = require(
+  "../controllers/appointmentController"
+);
 
 const {
   protect,
@@ -23,6 +27,21 @@ router.patch(
   "/:id/status",
   protect,
   updateAppointmentStatus
+);
+
+// PATIENT APPOINTMENTS
+
+router.get(
+  "/patient",
+  protect,
+  getPatientAppointments
+);
+
+
+router.patch(
+  "/:id/cancel",
+  protect,
+  cancelPatientAppointment
 );
 
 router.get("/booked-slots", getBookedSlots);

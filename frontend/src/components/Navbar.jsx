@@ -93,11 +93,11 @@ function Navbar() {
                   <span>{user.email}</span>
                 </div>
 
-                <a href="/profile">
+                <a href="/patient-profile">
                   👤 My Profile
                 </a>
 
-                <a href="/appointments">
+                <a href="/my-appointments">
                   📅 My Appointments
                 </a>
 

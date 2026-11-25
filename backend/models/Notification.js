@@ -1,50 +1,87 @@
 const mongoose = require("mongoose");
 
-const notificationSchema = new mongoose.Schema(
-  {
-    doctor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Doctor",
-      required: true,
-    },
+const notificationSchema =
+  new mongoose.Schema(
+    {
+      // =========================
+      // RECIPIENTS
+      // =========================
 
-    appointment: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Appointment",
-      default: null,
-    },
+      doctor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Doctor",
 
-    type: {
-      type: String,
-      enum: [
-        "new_appointment",
-        "appointment_cancelled",
-        "appointment_delayed",
-      ],
-      required: true,
-    },
+        // Jo çdo notification është
+        // për doktorin.
+        default: null,
+      },
 
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+      patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
 
-    message: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+        // Jo çdo notification është
+        // për pacientin.
+        default: null,
+      },
 
-    isRead: {
-      type: Boolean,
-      default: false,
+      // =========================
+      // APPOINTMENT
+      // =========================
+
+      appointment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Appointment",
+        default: null,
+      },
+
+      // =========================
+      // TYPE
+      // =========================
+
+      type: {
+        type: String,
+
+        enum: [
+          "new_appointment",
+          "appointment_booked",
+          "appointment_cancelled",
+          "appointment_delayed",
+          "appointment_completed",
+        ],
+
+        required: true,
+      },
+
+      // =========================
+      // CONTENT
+      // =========================
+
+      title: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+
+      message: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+
+      // =========================
+      // READ STATUS
+      // =========================
+
+      isRead: {
+        type: Boolean,
+        default: false,
+      },
     },
-  },
-  {
-    timestamps: true,
-  }
-);
+    {
+      timestamps: true,
+    }
+  );
 
 const Notification = mongoose.model(
   "Notification",

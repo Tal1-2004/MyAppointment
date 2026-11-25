@@ -16,6 +16,7 @@ import DoctorProfile from "./pages/DoctorProfile";
 import DoctorAppointments from "./pages/DoctorAppointments";
 import DoctorSettings from "./pages/DoctorSettings";
 import PatientProfile from "./pages/PatientProfile";
+import PatientAppointments from "./pages/PatientAppointments";
 
 function App() {
   return (
@@ -81,6 +82,10 @@ function App() {
       <Route
           path="/patient-profile"
           element={<PatientProfile />}
+        />
+        <Route
+          path="/my-appointments"
+          element={<PatientAppointments />}
         />
 
     </Routes>

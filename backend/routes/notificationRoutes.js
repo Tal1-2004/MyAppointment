@@ -6,14 +6,17 @@ const {
   getDoctorNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
+
+  getPatientNotifications,
+  markPatientNotificationAsRead,
+  markAllPatientNotificationsAsRead,
 } = require(
   "../controllers/notificationController"
 );
 
-const {
-  protect,
-} = require("../middleware/authMiddleware");
-
+// ==============================
+// DOCTOR NOTIFICATIONS
+// ==============================
 
 router.get(
   "/doctor",
@@ -21,6 +24,11 @@ router.get(
   getDoctorNotifications
 );
 
+router.patch(
+  "/read-all",
+  protect,
+  markAllNotificationsAsRead
+);
 
 router.patch(
   "/:id/read",
@@ -29,11 +37,26 @@ router.patch(
 );
 
 
-router.patch(
-  "/read-all",
+// ==============================
+// PATIENT NOTIFICATIONS
+// ==============================
+
+router.get(
+  "/patient",
   protect,
-  markAllNotificationsAsRead
+  getPatientNotifications
 );
 
+router.patch(
+  "/patient/read-all",
+  protect,
+  markAllPatientNotificationsAsRead
+);
+
+router.patch(
+  "/patient/:id/read",
+  protect,
+  markPatientNotificationAsRead
+);
 
 module.exports = router;
