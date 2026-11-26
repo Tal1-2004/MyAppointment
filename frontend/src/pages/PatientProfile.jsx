@@ -595,10 +595,11 @@ function PatientProfile() {
             type="button"
             className="patient-profile-home"
             onClick={() => {
-              window.location.href = "/";
+              window.location.href =
+                "/patient-dashboard";
             }}
           >
-            ← Home
+            ← Dashboard
           </button>
         </div>
 

@@ -443,14 +443,21 @@ function PatientDashboard() {
       {/* SIDEBAR */}
 
       <aside className="patient-dashboard-sidebar">
-        <div className="patient-sidebar-logo">
+        <button
+          type="button"
+          className="patient-sidebar-logo"
+          onClick={() => {
+            window.location.href = "/";
+          }}
+          title="Back to Home"
+        >
           <img
             src="/Designer.png"
             alt="MyAppointment logo"
           />
 
           <span>MyAppointment</span>
-        </div>
+        </button>
 
         <nav className="patient-dashboard-nav">
           <button
@@ -488,6 +495,16 @@ function PatientDashboard() {
             }}
           >
             👤 My Profile
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href =
+                "/patient-settings";
+            }}
+          >
+            ⚙️ Settings
           </button>
 
           <button

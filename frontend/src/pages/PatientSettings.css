@@ -1,0 +1,916 @@
+/* =========================================
+   PATIENT SETTINGS
+========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+.patient-settings-page {
+  min-height: 100vh;
+
+  padding: 44px 24px 70px;
+
+  background: #f5f8fb;
+  color: #183153;
+
+  font-family: Inter, Arial, sans-serif;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+.patient-settings-container {
+  width: min(950px, 100%);
+  margin: 0 auto;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.patient-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 28px;
+}
+
+.patient-settings-header > div:first-child > p {
+  margin: 0 0 6px;
+
+  color: #0f9b8e;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.patient-settings-header h1 {
+  margin: 0;
+
+  color: #15344e;
+
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.patient-settings-header > div:first-child > span {
+  display: block;
+
+  margin-top: 8px;
+
+  color: #7a8b9d;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   BACK TO DASHBOARD
+========================================= */
+
+.settings-dashboard-btn {
+  flex-shrink: 0;
+
+  padding: 10px 15px;
+
+  border: 1px solid #d9e5e6;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #417080;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.settings-dashboard-btn:hover {
+  background: #eff9f7;
+  border-color: #addbd5;
+
+  color: #0b8d82;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   SETTINGS SECTIONS
+========================================= */
+
+.patient-settings-section {
+  margin-bottom: 18px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e4ebf0;
+  border-radius: 15px;
+
+  box-shadow:
+    0 5px 22px
+    rgba(19, 52, 78, 0.04);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+/* =========================================
+   SECTION HEADING
+========================================= */
+
+.settings-section-heading {
+  padding: 19px 21px 16px;
+
+  border-bottom: 1px solid #edf1f4;
+}
+
+.settings-section-heading h2 {
+  margin: 0;
+
+  color: #1c3b54;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.settings-section-heading p {
+  margin: 5px 0 0;
+
+  color: #8a98a6;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   SETTINGS ROW
+========================================= */
+
+.settings-option {
+  display: grid;
+
+  grid-template-columns:
+    44px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 14px;
+
+  min-height: 78px;
+
+  padding: 15px 21px;
+
+  border-bottom: 1px solid #eff3f5;
+
+  transition: background 0.2s ease;
+}
+
+.settings-option:last-child {
+  border-bottom: none;
+}
+
+.settings-option:hover {
+  background: #fbfdfd;
+}
+
+
+/* =========================================
+   ICON
+========================================= */
+
+.settings-option-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #e8f6f4;
+
+  font-size: 18px;
+
+  flex-shrink: 0;
+}
+
+.settings-option-icon.danger {
+  background: #fff0f0;
+
+  color: #dc4444;
+}
+
+
+/* =========================================
+   OPTION CONTENT
+========================================= */
+
+.settings-option-content {
+  min-width: 0;
+}
+
+.settings-option-content strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #28445d;
+
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.settings-option-content p {
+  margin: 0;
+
+  color: #8897a6;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   NORMAL ACTION BUTTON
+========================================= */
+
+.settings-action-btn {
+  flex-shrink: 0;
+
+  padding: 9px 13px;
+
+  border: 1px solid #cee1df;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #108b80;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.settings-action-btn:hover:not(:disabled) {
+  background: #eff9f7;
+
+  border-color: #9fd5cf;
+
+  transform: translateY(-1px);
+}
+
+.settings-action-btn:disabled {
+  background: #f5f7f8;
+
+  border-color: #e4e9ed;
+
+  color: #9ba7b1;
+
+  cursor: not-allowed;
+
+  opacity: 0.8;
+}
+
+
+/* =========================================
+   TOGGLE SWITCH
+========================================= */
+
+.patient-settings-page .settings-toggle {
+  position: relative;
+
+  display: block;
+
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+
+  height: 26px !important;
+  min-height: 26px !important;
+  max-height: 26px !important;
+
+  flex: 0 0 48px;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: 0 !important;
+  border-radius: 999px !important;
+
+  outline: none;
+
+  background: #cbd5df;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow: none !important;
+
+  transition:
+    background 0.25s ease;
+}
+
+
+/* WHITE CIRCLE */
+
+.patient-settings-page
+  .settings-toggle
+  > span {
+  position: absolute !important;
+
+  top: 3px !important;
+  left: 3px !important;
+  right: auto !important;
+  bottom: auto !important;
+
+  display: block !important;
+
+  width: 20px !important;
+  min-width: 20px !important;
+  max-width: 20px !important;
+
+  height: 20px !important;
+  min-height: 20px !important;
+  max-height: 20px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: none !important;
+  border-radius: 50% !important;
+
+  background: #ffffff !important;
+
+  box-shadow:
+    0 2px 5px
+    rgba(20, 40, 60, 0.25) !important;
+
+  transform: translateX(0);
+
+  transition:
+    transform 0.25s ease;
+}
+
+
+/* TOGGLE ON */
+
+.patient-settings-page
+  .settings-toggle.active {
+  background: #0f9b8e !important;
+}
+
+.patient-settings-page
+  .settings-toggle.active
+  > span {
+  transform: translateX(22px);
+}
+
+
+/* TOGGLE HOVER */
+
+.patient-settings-page
+  .settings-toggle:hover {
+  opacity: 0.92;
+}
+
+
+/* =========================================
+   DANGER / LOG OUT
+========================================= */
+
+.danger-section {
+  border-color: #f0dddd;
+}
+
+.danger-section
+  .settings-section-heading {
+  background: #fffafa;
+}
+
+.settings-logout-btn {
+  flex-shrink: 0;
+
+  padding: 9px 15px;
+
+  border: 1px solid #f2c7c7;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #d74343;
+
+  font-size: 11px;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.settings-logout-btn:hover {
+  background: #fff0f0;
+
+  border-color: #eaa5a5;
+
+  color: #be2929;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   LOGOUT MODAL OVERLAY
+========================================= */
+
+.logout-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(11, 24, 39, 0.52);
+
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  z-index: 9999;
+}
+
+
+/* =========================================
+   LOGOUT MODAL
+========================================= */
+
+.logout-modal {
+  width: min(400px, 100%);
+
+  padding: 29px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4e9ee;
+  border-radius: 17px;
+
+  text-align: center;
+
+  box-shadow:
+    0 25px 70px
+    rgba(10, 30, 50, 0.22);
+}
+
+.logout-modal-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin:
+    0 auto
+    15px;
+
+  border-radius: 14px;
+
+  background: #fff0f0;
+
+  font-size: 23px;
+}
+
+.logout-modal h3 {
+  margin: 0;
+
+  color: #203a52;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.logout-modal p {
+  max-width: 305px;
+
+  margin:
+    10px auto
+    22px;
+
+  color: #7b8c9e;
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+
+/* =========================================
+   MODAL BUTTONS
+========================================= */
+
+.logout-modal-actions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+.logout-modal-actions button {
+  width: 100%;
+
+  padding: 11px 14px;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.logout-modal-cancel {
+  border: 1px solid #dce4ea;
+
+  background: #ffffff;
+
+  color: #53687a;
+}
+
+.logout-modal-cancel:hover {
+  background: #f5f7f9;
+
+  transform: translateY(-1px);
+}
+
+.logout-modal-confirm {
+  border: 1px solid #dc4444;
+
+  background: #dc4444;
+
+  color: #ffffff;
+}
+
+.logout-modal-confirm:hover {
+  border-color: #c93434;
+
+  background: #c93434;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   DARK MODE
+========================================= */
+
+html[data-theme="dark"]
+  .patient-settings-page {
+  background: #111827;
+
+  color: #e5edf5;
+}
+
+
+/* HEADER */
+
+html[data-theme="dark"]
+  .patient-settings-header h1 {
+  color: #f1f5f9;
+}
+
+html[data-theme="dark"]
+  .patient-settings-header
+  > div:first-child
+  > span {
+  color: #94a3b8;
+}
+
+
+/* SECTION */
+
+html[data-theme="dark"]
+  .patient-settings-section {
+  background: #182536;
+
+  border-color: #304155;
+
+  box-shadow: none;
+}
+
+html[data-theme="dark"]
+  .settings-section-heading {
+  border-color: #304155;
+}
+
+html[data-theme="dark"]
+  .settings-section-heading h2 {
+  color: #edf4fa;
+}
+
+html[data-theme="dark"]
+  .settings-section-heading p {
+  color: #91a1b3;
+}
+
+
+/* ROW */
+
+html[data-theme="dark"]
+  .settings-option {
+  border-color: #304155;
+}
+
+html[data-theme="dark"]
+  .settings-option:hover {
+  background: #1d2c3e;
+}
+
+
+/* TEXT */
+
+html[data-theme="dark"]
+  .settings-option-content strong {
+  color: #edf4fa;
+}
+
+html[data-theme="dark"]
+  .settings-option-content p {
+  color: #9aabba;
+}
+
+
+/* ICON */
+
+html[data-theme="dark"]
+  .settings-option-icon {
+  background: #1e4544;
+}
+
+
+/* BUTTON */
+
+html[data-theme="dark"]
+  .settings-dashboard-btn,
+html[data-theme="dark"]
+  .settings-action-btn {
+  background: #202e40;
+
+  border-color: #3b4d62;
+
+  color: #79d5cc;
+}
+
+html[data-theme="dark"]
+  .settings-dashboard-btn:hover,
+html[data-theme="dark"]
+  .settings-action-btn:hover:not(:disabled) {
+  background: #26384b;
+
+  border-color: #4e657c;
+}
+
+html[data-theme="dark"]
+  .settings-action-btn:disabled {
+  background: #202936;
+
+  border-color: #323d4c;
+
+  color: #677587;
+}
+
+
+/* DARK TOGGLE OFF */
+
+html[data-theme="dark"]
+  .patient-settings-page
+  .settings-toggle {
+  background: #4a5969;
+}
+
+
+/* DARK TOGGLE ON */
+
+html[data-theme="dark"]
+  .patient-settings-page
+  .settings-toggle.active {
+  background: #13a89a !important;
+}
+
+
+/* DANGER */
+
+html[data-theme="dark"]
+  .danger-section {
+  border-color: #56383e;
+}
+
+html[data-theme="dark"]
+  .danger-section
+  .settings-section-heading {
+  background: #211e27;
+}
+
+html[data-theme="dark"]
+  .settings-option-icon.danger {
+  background: #42272e;
+}
+
+html[data-theme="dark"]
+  .settings-logout-btn {
+  background: #251e25;
+
+  border-color: #624048;
+
+  color: #ff9b9b;
+}
+
+html[data-theme="dark"]
+  .settings-logout-btn:hover {
+  background: #34232a;
+
+  border-color: #7b4a54;
+}
+
+
+/* =========================================
+   DARK MODE MODAL
+========================================= */
+
+html[data-theme="dark"]
+  .logout-modal {
+  background: #182536;
+
+  border-color: #35465b;
+
+  box-shadow:
+    0 25px 70px
+    rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme="dark"]
+  .logout-modal-icon {
+  background: #42272e;
+}
+
+html[data-theme="dark"]
+  .logout-modal h3 {
+  color: #f1f5f9;
+}
+
+html[data-theme="dark"]
+  .logout-modal p {
+  color: #9aaabb;
+}
+
+html[data-theme="dark"]
+  .logout-modal-cancel {
+  background: #202e40;
+
+  border-color: #3a4d63;
+
+  color: #d5e0ea;
+}
+
+html[data-theme="dark"]
+  .logout-modal-cancel:hover {
+  background: #293a4d;
+}
+
+html[data-theme="dark"]
+  .logout-modal-confirm {
+  border-color: #dc4444;
+
+  background: #dc4444;
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 700px) {
+  .patient-settings-page {
+    padding:
+      28px 16px
+      50px;
+  }
+
+  .patient-settings-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .patient-settings-header h1 {
+    font-size: 26px;
+  }
+
+  .settings-dashboard-btn {
+    align-self: flex-start;
+  }
+
+  .settings-option {
+    grid-template-columns:
+      40px
+      minmax(0, 1fr);
+
+    gap: 12px;
+
+    padding: 15px;
+  }
+
+  .settings-option-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .settings-action-btn,
+  .settings-logout-btn,
+  .patient-settings-page
+    .settings-toggle {
+    grid-column: 2;
+
+    justify-self: start;
+
+    margin-top: 5px !important;
+  }
+}
+
+
+@media (max-width: 420px) {
+  .patient-settings-page {
+    padding:
+      22px 12px
+      40px;
+  }
+
+  .patient-settings-section {
+    border-radius: 12px;
+  }
+
+  .settings-section-heading {
+    padding:
+      17px 16px
+      14px;
+  }
+
+  .logout-modal {
+    padding: 24px 19px;
+  }
+
+  .logout-modal-actions {
+    grid-template-columns: 1fr;
+  }
+}

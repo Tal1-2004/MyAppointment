@@ -36,21 +36,29 @@
 .patient-sidebar-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
 
-  padding: 0 8px 28px;
+  width: 100%;
+
+  padding: 0 0 28px;
 }
 
 .patient-sidebar-logo img {
-  width: 42px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
   object-fit: contain;
 }
 
 .patient-sidebar-logo span {
-  font-size: 19px;
-  font-weight: 800;
   color: #092c4c;
+
+  font-size: 16px;
+  font-weight: 800;
+
+  white-space: nowrap;
 }
 
 /* =========================
@@ -1037,4 +1045,26 @@
   .patient-dashboard-section-header {
     align-items: flex-start;
   }
+}
+.patient-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  width: 100%;
+
+  padding: 0 0 28px;
+
+  border: none;
+  background: transparent;
+
+  text-align: left;
+  cursor: pointer;
+}
+.patient-sidebar-logo {
+  transition: opacity 0.2s ease;
+}
+
+.patient-sidebar-logo:hover {
+  opacity: 0.78;
 }

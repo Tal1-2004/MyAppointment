@@ -18,6 +18,7 @@ import DoctorSettings from "./pages/DoctorSettings";
 import PatientProfile from "./pages/PatientProfile";
 import PatientAppointments from "./pages/PatientAppointments";
 import PatientDashboard from "./pages/PatientDashboard";
+import PatientSettings from "./pages/PatientSettings";
 
 function App() {
   return (
@@ -92,6 +93,10 @@ function App() {
           path="/my-appointments"
           element={<PatientAppointments />}
         />
+        <Route
+            path="/patient-settings"
+            element={<PatientSettings />}
+          />
 
     </Routes>
     

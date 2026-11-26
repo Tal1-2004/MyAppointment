@@ -38,7 +38,6 @@ function Login() {
       );
 
       const data = await response.json();
-      console.log("LOGIN RESPONSE:", data);
 
       if (!response.ok) {
         setMessage(data.message || "Invalid email or password");
@@ -59,7 +58,7 @@ function Login() {
         localStorage.removeItem("user");
       }
 
-      if (data.user.role === "admin") {
+     if (data.user.role === "admin") {
           window.location.href = "/admin-dashboard";
         } else if (data.user.role === "doctor") {
           window.location.href = "/doctor-dashboard";

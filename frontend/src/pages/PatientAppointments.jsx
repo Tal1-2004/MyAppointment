@@ -210,10 +210,11 @@ function PatientAppointments() {
             type="button"
             className="patient-appointments-home"
             onClick={() => {
-              window.location.href = "/";
+              window.location.href =
+                "/patient-dashboard";
             }}
           >
-            ← Home
+            ← Dashboard
           </button>
         </div>
 
