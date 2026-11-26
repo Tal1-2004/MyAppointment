@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
 import "./PatientSettings.css";
 
 function PatientSettings() {
@@ -7,6 +11,14 @@ function PatientSettings() {
       sessionStorage.getItem("user") ||
       "null"
   );
+
+  const token =
+    localStorage.getItem("token") ||
+    sessionStorage.getItem("token");
+
+  // =========================
+  // SETTINGS STATE
+  // =========================
 
   const [darkMode, setDarkMode] =
     useState(
@@ -18,6 +30,54 @@ function PatientSettings() {
     notificationsEnabled,
     setNotificationsEnabled,
   ] = useState(true);
+
+  // =========================
+  // CHANGE PASSWORD STATE
+  // =========================
+
+  const [
+    changePasswordOpen,
+    setChangePasswordOpen,
+  ] = useState(false);
+
+  const [
+    passwordForm,
+    setPasswordForm,
+  ] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [
+    passwordMessage,
+    setPasswordMessage,
+  ] = useState("");
+
+  const [
+    passwordMessageType,
+    setPasswordMessageType,
+  ] = useState("");
+
+  const [
+    changingPassword,
+    setChangingPassword,
+  ] = useState(false);
+
+  const [
+    showCurrentPassword,
+    setShowCurrentPassword,
+  ] = useState(false);
+
+  const [
+    showNewPassword,
+    setShowNewPassword,
+  ] = useState(false);
+
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
 
   // =========================
   // THEME
@@ -46,6 +106,181 @@ function PatientSettings() {
       );
     }
   }, [darkMode]);
+
+  // =========================
+  // PASSWORD INPUT
+  // =========================
+
+  const handlePasswordChange = (
+    event
+  ) => {
+    const { name, value } =
+      event.target;
+
+    setPasswordForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
+
+    setPasswordMessage("");
+    setPasswordMessageType("");
+  };
+
+  // =========================
+  // CLOSE PASSWORD FORM
+  // =========================
+
+  const closePasswordForm = () => {
+    setChangePasswordOpen(false);
+
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+
+    setPasswordMessage("");
+    setPasswordMessageType("");
+
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+  };
+
+  // =========================
+  // SUBMIT CHANGE PASSWORD
+  // =========================
+
+  const handleChangePassword = async (
+    event
+  ) => {
+    event.preventDefault();
+
+    setPasswordMessage("");
+    setPasswordMessageType("");
+
+    if (
+      !passwordForm.currentPassword ||
+      !passwordForm.newPassword ||
+      !passwordForm.confirmPassword
+    ) {
+      setPasswordMessage(
+        "Please complete all password fields."
+      );
+
+      setPasswordMessageType("error");
+      return;
+    }
+
+    if (
+      passwordForm.newPassword.length < 6
+    ) {
+      setPasswordMessage(
+        "New password must be at least 6 characters."
+      );
+
+      setPasswordMessageType("error");
+turn;
+    }
+
+    if (
+      passwordForm.newPassword !==
+      passwordForm.confirmPassword
+    ) {
+      setPasswordMessage(
+        "New passwords do not match."
+      );
+
+      setPasswordMessageType("error");
+      return;
+    }
+
+    if (
+      passwordForm.currentPassword ===
+      passwordForm.newPassword
+    ) {
+      setPasswordMessage(
+        "New password must be different from your current password."
+      );
+
+      setPasswordMessageType("error");
+      return;
+    }
+
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      setChangingPassword(true);
+
+      const response = await fetch(
+        "http://localhost:5000/api/auth/change-password",
+        {
+          method: "PATCH",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            Authorization:
+              `Bearer ${token}`,
+          },
+
+          body: JSON.stringify({
+            currentPassword:
+              passwordForm.currentPassword,
+
+            newPassword:
+              passwordForm.newPassword,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setPasswordMessage(
+          data.message ||
+            "Could not change password."
+        );
+
+        setPasswordMessageType("error");
+        return;
+      }
+
+      setPasswordMessage(
+        data.message ||
+          "Password changed successfully."
+      );
+
+      setPasswordMessageType("success");
+
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+      setShowCurrentPassword(false);
+      setShowNewPassword(false);
+      setShowConfirmPassword(false);
+    } catch (error) {
+      console.error(
+        "Change password error:",
+        error
+      );
+
+      setPasswordMessage(
+        "Cannot connect to the server."
+      );
+
+      setPasswordMessageType("error");
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   // =========================
   // LOGOUT
@@ -163,12 +398,227 @@ function PatientSettings() {
             <button
               type="button"
               className="settings-action-btn"
-              disabled
-              title="Coming soon"
+              onClick={() => {
+                if (changePasswordOpen) {
+                  closePasswordForm();
+                } else {
+                  setChangePasswordOpen(true);
+                }
+              }}
             >
-              Coming Soon
+              {changePasswordOpen
+                ? "Close"
+                : "Change Password"}
             </button>
           </div>
+
+          {/* CHANGE PASSWORD FORM */}
+
+          {changePasswordOpen && (
+            <form
+              className="change-password-form"
+              onSubmit={
+                handleChangePassword
+              }
+            >
+              <div className="change-password-heading">
+                <h3>
+                  Update your password
+                </h3>
+
+                <p>
+                  Enter your current
+                  password and choose a new
+                  secure password.
+                </p>
+              </div>
+
+              <div className="change-password-fields">
+
+                {/* CURRENT PASSWORD */}
+
+                <div className="change-password-group">
+                  <label htmlFor="currentPassword">
+                    Current Password
+                  </label>
+
+                  <div className="settings-password-wrapper">
+                    <input
+                      id="currentPassword"
+                      type={
+                        showCurrentPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="currentPassword"
+                      value={
+                        passwordForm.currentPassword
+                      }
+                      onChange={
+                        handlePasswordChange
+                      }
+                      placeholder="Enter current password"
+                      autoComplete="current-password"
+                      required
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowCurrentPassword(
+                          (current) =>
+                            !current
+                        )
+                      }
+                      aria-label={
+                        showCurrentPassword
+                          ? "Hide current password"
+                          : "Show current password"
+                      }
+                    >
+                      {showCurrentPassword
+                        ? "🙈"
+                        : "👁"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* NEW PASSWORD */}
+
+                <div className="change-password-group">
+                  <label htmlFor="newPassword">
+                    New Password
+                  </label>
+
+                  <div className="settings-password-wrapper">
+                    <input
+                      id="newPassword"
+                      type={
+                        showNewPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="newPassword"
+                      value={
+                        passwordForm.newPassword
+                      }
+                      onChange={
+                        handlePasswordChange
+                      }
+                      placeholder="Enter new password"
+                      autoComplete="new-password"
+                      minLength="6"
+                      required
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowNewPassword(
+                          (current) =>
+                            !current
+                        )
+                      }
+                      aria-label={
+                        showNewPassword
+                          ? "Hide new password"
+                          : "Show new password"
+                      }
+                    >
+                      {showNewPassword
+                        ? "🙈"
+                        : "👁"}
+                    </button>
+                  </div>
+
+                  <small>
+                    Minimum 6 characters.
+                  </small>
+                </div>
+
+                {/* CONFIRM PASSWORD */}
+
+                <div className="change-password-group">
+                  <label htmlFor="confirmPassword">
+                    Confirm New Password
+                  </label>
+
+                  <div className="settings-password-wrapper">
+                    <input
+                      id="confirmPassword"
+                      type={
+                        showConfirmPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="confirmPassword"
+                      value={
+                        passwordForm.confirmPassword
+                      }
+                      onChange={
+                        handlePasswordChange
+                      }
+                      placeholder="Confirm new password"
+                      autoComplete="new-password"
+                      minLength="6"
+                      required
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(
+                          (current) =>
+                            !current
+                        )
+                      }
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirmed password"
+                          : "Show confirmed password"
+                      }
+                    >
+                      {showConfirmPassword
+                        ? "🙈"
+                        : "👁"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {passwordMessage && (
+                <div
+                  className={`change-password-message ${passwordMessageType}`}
+                >
+                  {passwordMessage}
+                </div>
+              )}
+
+              <div className="change-password-actions">
+                <button
+                  type="button"
+                  className="change-password-cancel"
+                  onClick={
+                    closePasswordForm
+                  }
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="change-password-submit"
+                  disabled={
+                    changingPassword
+                  }
+                >
+                  {changingPassword
+                    ? "Updating..."
+                    : "Update Password"}
+                </button>
+              </div>
+            </form>
+          )}
         </section>
 
         {/* PREFERENCES */}

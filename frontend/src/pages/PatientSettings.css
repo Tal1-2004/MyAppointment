@@ -914,3 +914,405 @@ html[data-theme="dark"]
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================
+   CHANGE PASSWORD FORM
+========================================= */
+
+.change-password-form {
+  padding: 22px;
+
+  background: #f9fcfc;
+
+  border-top: 1px solid #e8eff1;
+}
+
+
+/* =========================================
+   CHANGE PASSWORD HEADING
+========================================= */
+
+.change-password-heading {
+  margin-bottom: 20px;
+}
+
+.change-password-heading h3 {
+  margin: 0;
+
+  color: #1c3b54;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.change-password-heading p {
+  margin: 6px 0 0;
+
+  color: #8595a5;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   PASSWORD FIELDS
+========================================= */
+
+.change-password-fields {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.change-password-group {
+  min-width: 0;
+}
+
+.change-password-group label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #344e65;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.change-password-group > small {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #94a2ae;
+
+  font-size: 10px;
+}
+
+
+/* =========================================
+   PASSWORD INPUT WRAPPER
+========================================= */
+
+.settings-password-wrapper {
+  position: relative;
+
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+}
+
+.settings-password-wrapper input {
+  width: 100%;
+  height: 43px;
+
+  padding:
+    0 45px
+    0 13px;
+
+  border: 1px solid #d9e3e8;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #263f55;
+
+  font-size: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.settings-password-wrapper input::placeholder {
+  color: #a4b0ba;
+}
+
+.settings-password-wrapper input:focus {
+  border-color: #53afa6;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(15, 155, 142, 0.08);
+}
+
+
+/* =========================================
+   PASSWORD EYE BUTTON
+========================================= */
+
+.settings-password-wrapper > button {
+  position: absolute;
+
+  top: 50%;
+  right: 7px;
+
+  transform: translateY(-50%);
+
+  width: 31px !important;
+  min-width: 31px !important;
+  max-width: 31px !important;
+
+  height: 31px !important;
+  min-height: 31px !important;
+  max-height: 31px !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: none !important;
+  border-radius: 7px;
+
+  background: transparent !important;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  box-shadow: none !important;
+
+  transition: background 0.2s ease;
+}
+
+.settings-password-wrapper > button:hover {
+  background: #edf7f5 !important;
+}
+
+
+/* =========================================
+   PASSWORD MESSAGE
+========================================= */
+
+.change-password-message {
+  margin-top: 16px;
+
+  padding: 10px 12px;
+
+  border-radius: 8px;
+
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.change-password-message.error {
+  border: 1px solid #f1c6c6;
+
+  background: #fff2f2;
+
+  color: #bc3d3d;
+}
+
+.change-password-message.success {
+  border: 1px solid #bce2d4;
+
+  background: #eefaf5;
+
+  color: #23835e;
+}
+
+
+/* =========================================
+   PASSWORD ACTIONS
+========================================= */
+
+.change-password-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 9px;
+
+  margin-top: 19px;
+}
+
+.change-password-actions button {
+  min-width: 110px;
+
+  padding: 10px 15px;
+
+  border-radius: 8px;
+
+  font-size: 11px;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+/* CANCEL */
+
+.change-password-cancel {
+  border: 1px solid #d9e3e8;
+
+  background: #ffffff;
+
+  color: #617485;
+}
+
+.change-password-cancel:hover {
+  background: #f3f6f8;
+
+  transform: translateY(-1px);
+}
+
+
+/* UPDATE PASSWORD */
+
+.change-password-submit {
+  border: 1px solid #0f9b8e;
+
+  background: #0f9b8e;
+
+  color: #ffffff;
+}
+
+.change-password-submit:hover:not(:disabled) {
+  border-color: #087e74;
+
+  background: #087e74;
+
+  transform: translateY(-1px);
+}
+
+.change-password-submit:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.65;
+}
+
+
+/* =========================================
+   CHANGE PASSWORD DARK MODE
+========================================= */
+
+html[data-theme="dark"]
+  .change-password-form {
+  background: #162231;
+
+  border-color: #304155;
+}
+
+html[data-theme="dark"]
+  .change-password-heading h3 {
+  color: #edf4fa;
+}
+
+html[data-theme="dark"]
+  .change-password-heading p {
+  color: #91a1b3;
+}
+
+html[data-theme="dark"]
+  .change-password-group label {
+  color: #cbd7e2;
+}
+
+html[data-theme="dark"]
+  .change-password-group
+  > small {
+  color: #8394a5;
+}
+
+html[data-theme="dark"]
+  .settings-password-wrapper input {
+  background: #202e40;
+
+  border-color: #3b4d62;
+
+  color: #e9f1f7;
+}
+
+html[data-theme="dark"]
+  .settings-password-wrapper
+  input::placeholder {
+  color: #748699;
+}
+
+html[data-theme="dark"]
+  .settings-password-wrapper
+  input:focus {
+  border-color: #54b9ae;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(84, 185, 174, 0.1);
+}
+
+html[data-theme="dark"]
+  .settings-password-wrapper
+  > button:hover {
+  background: #29413f !important;
+}
+
+html[data-theme="dark"]
+  .change-password-cancel {
+  background: #202e40;
+
+  border-color: #3b4d62;
+
+  color: #d5e0ea;
+}
+
+html[data-theme="dark"]
+  .change-password-message.error {
+  background: #382329;
+
+  border-color: #663c45;
+
+  color: #ffaaaa;
+}
+
+html[data-theme="dark"]
+  .change-password-message.success {
+  background: #1b3832;
+
+  border-color: #315d52;
+
+  color: #86d8bc;
+}
+
+
+/* =========================================
+   CHANGE PASSWORD RESPONSIVE
+========================================= */
+
+@media (max-width: 800px) {
+  .change-password-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 500px) {
+  .change-password-form {
+    padding: 18px 15px;
+  }
+
+  .change-password-actions {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .change-password-actions button {
+    width: 100%;
+    min-width: 0;
+  }
+}
