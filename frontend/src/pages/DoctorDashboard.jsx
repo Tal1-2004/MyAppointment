@@ -260,16 +260,16 @@ function DoctorDashboard() {
   // =========================
 
   const formatAppointmentDate = (
-    dateValue
-  ) => {
-    return new Date(
       dateValue
-    ).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  };
+    ) => {
+      return new Date(
+        dateValue
+      ).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    };
 
   const formatNotificationTime = (
     dateValue
@@ -957,45 +957,43 @@ function DoctorDashboard() {
 
                     {/* DETAILS */}
 
-                    <div className="appointment-details">
-                      <div>
-                        <span className="detail-label">
-                          Date
-                        </span>
+              <div className="appointment-details">
 
-                        <strong>
-                          {formatAppointmentDate(
-                            appointment.date
-                          )}
-                        </strong>
-                      </div>
+                <div>
+                  <span className="detail-label">
+                    Time
+                  </span>
 
-                      <div>
-                        <span className="detail-label">
-                          Time
-                        </span>
+                  <strong>
+                    {appointment.time}
+                  </strong>
+                </div>
 
-                        <strong>
-                          {
-                            appointment.time
-                          }
-                        </strong>
-                      </div>
+                <div>
+                  <span className="detail-label">
+                    Date
+                  </span>
 
-                      <div>
-                        <span className="detail-label">
-                          Status
-                        </span>
+                  <strong>
+                    {formatAppointmentDate(
+                      appointment.date
+                    )}
+                  </strong>
+                </div>
 
-                        <span
-                          className={`appointment-status appointment-status-${appointment.status}`}
-                        >
-                          {
-                            appointment.status
-                          }
-                        </span>
-                      </div>
-                    </div>
+                <div>
+                  <span className="detail-label">
+                    Status
+                  </span>
+
+                  <span
+                    className={`appointment-status appointment-status-${appointment.status}`}
+                  >
+                    {appointment.status}
+                  </span>
+                </div>
+
+              </div>
 
                     {/* REASON */}
 

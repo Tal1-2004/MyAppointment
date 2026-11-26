@@ -163,14 +163,14 @@ function PatientAppointments() {
   // =========================
 
   const formatDate = (dateValue) => {
-    return new Date(
-      dateValue
-    ).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  };
+  return new Date(
+    dateValue
+  ).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
 
   // =========================
   // DOCTOR NAME
