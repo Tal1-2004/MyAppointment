@@ -373,3 +373,646 @@
   margin: 0;
   color: #74807c;
 }
+
+/* =====================================================
+   DOCTORS SEARCH
+===================================================== */
+
+.doctors-search-wrapper {
+  position: relative;
+
+  width: min(620px, 100%);
+  margin: 28px auto 0;
+
+  display: flex;
+  align-items: center;
+
+  background: #ffffff;
+
+  border: 1px solid #dce8e6;
+  border-radius: 15px;
+
+  box-shadow:
+    0 8px 30px rgba(20, 70, 80, 0.08);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.doctors-search-wrapper:focus-within {
+  border-color: #1b9c8f;
+
+  box-shadow:
+    0 8px 30px rgba(15, 155, 142, 0.12);
+}
+
+.doctors-search-wrapper > span {
+  flex-shrink: 0;
+
+  margin-left: 18px;
+
+  color: #6f8793;
+
+  font-size: 24px;
+}
+
+.doctors-search-wrapper input {
+  width: 100%;
+
+  padding: 16px 15px;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #183153;
+
+  font-size: 14px;
+}
+
+.doctors-search-wrapper input::placeholder {
+  color: #9aabb5;
+}
+
+.doctors-search-wrapper > button {
+  flex-shrink: 0;
+
+  width: 35px;
+  height: 35px;
+
+  margin-right: 9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: #8295a0;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.doctors-search-wrapper > button:hover {
+  background: #eef8f6;
+  color: #0b8f83;
+}
+
+
+/* =====================================================
+   SPECIALTIES SECTION
+===================================================== */
+
+.specialties-section {
+  width: min(1200px, calc(100% - 40px));
+
+  margin:
+    45px auto
+    15px;
+
+  padding: 27px 28px 30px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4ecec;
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 35px rgba(25, 60, 75, 0.055);
+}
+
+
+/* =====================================================
+   SPECIALTIES HEADER
+===================================================== */
+
+.specialties-heading {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-end;
+
+  gap: 24px;
+
+  margin-bottom: 23px;
+}
+
+.specialties-heading p {
+  margin: 0 0 5px;
+
+  color: #14998c;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
+
+  text-transform: uppercase;
+}
+
+.specialties-heading h2 {
+  margin: 0;
+
+  color: #17354d;
+
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.specialties-heading span {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #82909d;
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   SLIDER ARROWS
+===================================================== */
+
+.specialties-arrows {
+  display: flex;
+  gap: 9px;
+}
+
+.specialties-arrows button {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #dae6e5;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #31556c;
+
+  font-size: 18px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.specialties-arrows button:hover {
+  background: #0f9b8e;
+
+  border-color: #0f9b8e;
+
+  color: #ffffff;
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   SPECIALTIES SLIDER
+===================================================== */
+
+.specialties-slider {
+  display: flex;
+
+  gap: 13px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+
+  padding:
+    3px 2px
+    8px;
+
+  scrollbar-width: none;
+}
+
+.specialties-slider::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* =====================================================
+   SPECIALTY CARD
+===================================================== */
+
+.specialty-slide {
+  flex:
+    0 0
+    145px;
+
+  min-height: 123px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 15px 12px;
+
+  border:
+    1px solid
+    #e1e9e9;
+
+  border-radius: 14px;
+
+  background: #fbfdfd;
+
+  color: #334f62;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.specialty-slide:hover {
+  transform:
+    translateY(-3px);
+
+  border-color:
+    #acdcd5;
+
+  background:
+    #f5fbfa;
+
+  box-shadow:
+    0 9px 20px
+    rgba(
+      15,
+      155,
+      142,
+      0.08
+    );
+}
+
+
+/* ACTIVE SPECIALTY */
+
+.specialty-slide.active {
+  border-color:
+    #159b8f;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ecf9f7,
+      #f9fdfc
+    );
+
+  box-shadow:
+    0 9px 22px
+    rgba(
+      15,
+      155,
+      142,
+      0.12
+    );
+}
+
+
+/* ICON */
+
+.specialty-slide-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: #e8f6f4;
+
+  font-size: 22px;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.specialty-slide:hover
+  .specialty-slide-icon {
+  transform: scale(1.06);
+}
+
+.specialty-slide.active
+  .specialty-slide-icon {
+  background: #d9f1ed;
+}
+
+
+/* SPECIALTY NAME */
+
+.specialty-slide strong {
+  max-width: 125px;
+
+  overflow: hidden;
+
+  color: #28485c;
+
+  font-size: 12px;
+  font-weight: 750;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* DOCTOR COUNT */
+
+.specialty-slide small {
+  color: #8a9ba6;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.specialty-slide.active strong {
+  color: #087f74;
+}
+
+.specialty-slide.active small {
+  color: #39958c;
+}
+
+
+/* =====================================================
+   RESULTS HEADER
+===================================================== */
+
+.doctors-results-header {
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  margin:
+    5px 0
+    24px;
+
+  padding-bottom: 17px;
+
+  border-bottom:
+    1px solid
+    #e7eded;
+}
+
+.doctors-results-header p {
+  margin:
+    0 0
+    4px;
+
+  color: #13968a;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.6px;
+}
+
+.doctors-results-header h2 {
+  margin: 0;
+
+  color: #17354d;
+
+  font-size: 24px;
+}
+
+.doctors-results-header span {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #8a99a5;
+
+  font-size: 12px;
+}
+
+
+/* CLEAR SPECIALTY */
+
+.doctors-results-header > button {
+  padding:
+    9px 13px;
+
+  border:
+    1px solid
+    #d0e4e1;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #118d82;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.doctors-results-header > button:hover {
+  border-color: #11998d;
+
+  background: #edf9f7;
+}
+
+
+/* =====================================================
+   FILTER EMPTY
+===================================================== */
+
+.doctors-filter-empty {
+  margin: 35px 0;
+
+  padding: 50px 25px !important;
+
+  border:
+    1px dashed
+    #d6e4e2;
+
+  border-radius: 15px;
+
+  background: #fbfdfd;
+}
+
+.doctors-filter-empty > div {
+  margin-bottom: 10px;
+
+  font-size: 30px;
+}
+
+.doctors-filter-empty button {
+  margin-top: 15px;
+
+  padding:
+    10px 16px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #0f9b8e;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.doctors-filter-empty button:hover {
+  background: #087e74;
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   IMPROVE OLD DOCTOR GRID SPACING
+===================================================== */
+
+.all-doctors {
+  width:
+    min(
+      1200px,
+      calc(100% - 40px)
+    );
+
+  margin:
+    0 auto;
+
+  padding:
+    35px 0
+    65px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 850px) {
+
+  .specialties-section {
+    width:
+      calc(100% - 28px);
+
+    margin-top: 30px;
+
+    padding:
+      22px 18px;
+  }
+
+  .specialties-heading {
+    align-items:
+      flex-start;
+  }
+
+  .specialty-slide {
+    flex-basis: 132px;
+
+    min-height: 115px;
+  }
+
+  .doctors-results-header h2 {
+    font-size: 21px;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .doctors-search-wrapper {
+    width: calc(100% - 10px);
+
+    margin-top: 22px;
+  }
+
+  .doctors-search-wrapper input {
+    padding:
+      14px 10px;
+
+    font-size: 12px;
+  }
+
+  .specialties-heading {
+    flex-direction:
+      column;
+
+    gap: 15px;
+  }
+
+  .specialties-arrows {
+    align-self:
+      flex-end;
+  }
+
+  .specialty-slide {
+    flex-basis: 120px;
+
+    min-height: 110px;
+  }
+
+  .specialty-slide-icon {
+    width: 41px;
+    height: 41px;
+
+    font-size: 19px;
+  }
+
+  .doctors-results-header {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    gap: 12px;
+  }
+
+  .doctors-results-header > button {
+    align-self:
+      flex-start;
+  }
+}
